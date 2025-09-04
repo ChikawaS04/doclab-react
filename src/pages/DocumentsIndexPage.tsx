@@ -44,8 +44,13 @@ export default function DocumentsIndexPage() {
                     <tbody className="divide-y">
                     {rows.map((d) => (
                         <tr key={d.id} className="hover:bg-gray-50">
-                            <td className="p-3 font-medium">
-                                <Link to={`/documents/${d.id}`} className="hover:underline">{d.title}</Link>
+                            <td className="p-0">
+                                <Link
+                                    to={`/documents/${d.id}`}
+                                    className="block p-3 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md"
+                                >
+                                    {d.title}
+                                </Link>
                             </td>
                             <td className="p-3 truncate">{d.filename}</td>
                             <td className="p-3">{d.type}</td>
