@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { uploadDocument, listDocuments } from "../api/documents";
 import StatusPill from "../components/StatusPill";
+import { toUiStatus } from "../lib/viewUtils";
 import { useNavigate } from "react-router-dom";
 
 export default function UploadPage() {
@@ -13,7 +14,7 @@ export default function UploadPage() {
 
     const recent = useQuery({
         queryKey: ["documents", { page: 1, pageSize: 5 }],
-        queryFn: () => listDocuments({ page: 1, pageSize: 5, sort: "createdAt", dir: "desc" }),
+        queryFn: () => listDocuments({ page: 1, pageSize: 5 }),
     });
 
     const mut = useMutation({
@@ -72,17 +73,21 @@ export default function UploadPage() {
 
                 <div className="mt-4 space-y-2 rounded-2xl bg-white p-4 shadow-sm">
                     {recent.isLoading && <div className="p-6 text-center text-sm text-gray-500">Loading…</div>}
-                    {recent.isError && <div className="p-6 text-center text-sm text-red-600">Failed to load.</div>}
+                    {recent.isError && (
+                        <div className="p-6 text-center text-sm text-red-600">
+                            Failed to load{recent.error instanceof Error ? `: ${recent.error.message}` : "."}
+                        </div>
+                    )}
                     {recent.data?.items?.map((d) => (
                         <div key={d.id} className="flex items-center justify-between rounded-xl px-3 py-3 hover:bg-gray-50">
                             <div className="flex items-center gap-3">
                                 <div className="grid h-9 w-9 place-items-center rounded-full bg-gray-100">📄</div>
                                 <div>
-                                    <div className="font-medium">{d.title || d.originalFilename}</div>
-                                    <div className="text-xs text-gray-500">{d.originalFilename}</div>
+                                    <div className="font-medium">{d.fileName}</div>
+                                    <div className="text-xs text-gray-500">{d.docType || extFromType(d.fileType)}</div>
                                 </div>
                             </div>
-                            <StatusPill status={d.status} />
+                            <StatusPill status={toUiStatus(d.status)} />
                         </div>
                     ))}
                     {!recent.isLoading && !recent.data?.items?.length && (
@@ -93,3 +98,16 @@ export default function UploadPage() {
         </section>
     );
 }
+
+function extFromType(ct: string) {
+    if (!ct) return "FILE";
+    if (ct.includes("pdf")) return "PDF";
+    if (ct.includes("word") || ct.includes("doc")) return "DOCX";
+    if (ct.includes("text")) return "TXT";
+    if (ct.includes("png")) return "PNG";
+    if (ct.includes("jpeg") || ct.includes("jpg")) return "JPG";
+    return "FILE";
+}
+
+
+

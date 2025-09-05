@@ -10,8 +10,9 @@ export function useDocumentWithPolling(id: string) {
         queryFn: ({ queryKey }) => getDocument(queryKey[1]),
         // v5: refetchInterval gets the Query instance, not (data)
         refetchInterval: (query) => {
-            const doc = query.state.data as DocumentDTO | undefined;
-            return doc?.status === "PROCESSING" ? 2500 : false; // poll while processing
+            const s = ((query.state.data as DocumentDTO | undefined)?.status || "").toUpperCase();
+            const busy = s === "PROCESSING" || s === "PENDING";
+            return busy ? 2500 : false;
         },
     });
 }

@@ -3,12 +3,13 @@ import { listDocuments } from "../api/documents";
 import StatusPill from "../components/StatusPill";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { safeDateStr, toUiStatus } from "../lib/viewUtils";
 
 export default function DocumentsIndexPage() {
     const [q, setQ] = useState("");
     const { data, isLoading, isError, refetch } = useQuery({
         queryKey: ["documents", { page: 1, pageSize: 25, q }],
-        queryFn: () => listDocuments({ page: 1, pageSize: 25, q, sort: "createdAt", dir: "desc" }),
+        queryFn: () => listDocuments({ page: 1, pageSize: 5 }),
     });
 
     const rows = data?.items || [];
@@ -45,15 +46,14 @@ export default function DocumentsIndexPage() {
                         <tr key={d.id} className="hover:bg-gray-50">
                             <td className="p-0">
                                 <Link to={`/documents/${d.id}`} className="block p-3 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md">
-                                    {d.title || d.originalFilename}
+                                    {d.fileName}
                                 </Link>
                             </td>
-                            <td className="p-3 truncate">{d.originalFilename}</td>
-                            <td className="p-3">{extFromType(d.contentType)}</td>
-                            <td className="p-3">{formatSize(d.sizeBytes)}</td>
-                            <td className="p-3">{new Date(d.createdAt).toLocaleString()}</td>
-                            <td className="p-3"><StatusPill status={d.status} /></td>
-                            <td className="p-3 text-center">⋯</td>
+                            <td className="p-3 truncate">{d.fileName}</td>
+                            <td className="p-3">{extFromType(d.fileType)}</td>
+                            <td className="p-3">—</td> {/* no size from backend */}
+                            <td className="p-3">{safeDateStr(d.uploadDate)}</td>
+                            <td className="p-3"><StatusPill status={toUiStatus(d.status)} /></td>
                         </tr>
                     ))}
                     {!isLoading && !isError && !rows.length && (
@@ -75,9 +75,10 @@ function extFromType(ct: string) {
     if (ct.includes("jpeg") || ct.includes("jpg")) return "JPG";
     return "FILE";
 }
-function formatSize(n: number) {
+
+/*function formatSize(n: number) {
     if (!n && n !== 0) return "";
     if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + " MB";
     if (n >= 1_000) return (n / 1_000).toFixed(0) + " KB";
     return n + " B";
-}
+}*/
