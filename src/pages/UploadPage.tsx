@@ -19,10 +19,11 @@ export default function UploadPage() {
 
     const mut = useMutation({
         mutationFn: (file: File) => uploadDocument(file, setProgress),
-        onSuccess: (doc) => {
+        onSuccess: (resp) => {
+            const id = (resp as any).id;   // both DocumentDetailDTO and DocumentDTO have id
             qc.invalidateQueries({ queryKey: ["documents"] });
             setProgress(null);
-            nav(`/documents/${doc.id}`);
+            nav(`/documents/${id}`);
         },
         onError: () => setProgress(null),
     });
@@ -84,7 +85,7 @@ export default function UploadPage() {
                                 <div className="grid h-9 w-9 place-items-center rounded-full bg-gray-100">📄</div>
                                 <div>
                                     <div className="font-medium">{d.fileName}</div>
-                                    <div className="text-xs text-gray-500">{d.docType || extFromType(d.fileType)}</div>
+                                    <StatusPill status={toUiStatus(d.status)} />
                                 </div>
                             </div>
                             <StatusPill status={toUiStatus(d.status)} />
@@ -99,7 +100,7 @@ export default function UploadPage() {
     );
 }
 
-function extFromType(ct: string) {
+/*function extFromType(ct: string) {
     if (!ct) return "FILE";
     if (ct.includes("pdf")) return "PDF";
     if (ct.includes("word") || ct.includes("doc")) return "DOCX";
@@ -107,7 +108,7 @@ function extFromType(ct: string) {
     if (ct.includes("png")) return "PNG";
     if (ct.includes("jpeg") || ct.includes("jpg")) return "JPG";
     return "FILE";
-}
+}*/
 
 
 
