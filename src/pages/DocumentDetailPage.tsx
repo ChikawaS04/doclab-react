@@ -16,6 +16,8 @@ export default function DocumentDetailPage() {
     // Build download URL only when backend says it's downloadable
     const href = doc.downloadable ? buildDownloadUrl(doc.id) : undefined;
     const canTryPreview = !!href && (doc.fileType || "").toLowerCase().includes("pdf");
+    const firstSummary =
+        doc.summaries?.find(s => s && s.summaryText && s.summaryText.trim().length > 0);
 
     return (
         <section className="space-y-6">
@@ -46,9 +48,21 @@ export default function DocumentDetailPage() {
             <div className="grid gap-6 md:grid-cols-3">
                 <div className="rounded-2xl bg-white p-6 shadow-sm md:col-span-1">
                     <h2 className="mb-3 text-xl font-semibold">Summary</h2>
-                    <p className="text-sm text-gray-700 whitespace-pre-line">
-                        {doc.summaries && doc.summaries.length ? doc.summaries[0].text : "No summary available yet."}
-                    </p>
+                    {firstSummary ? (
+                        <>
+                            {/* Optional: show title as a small heading */}
+                            {firstSummary.title && (
+                                <div className="mb-2 text-sm font-medium text-gray-600">
+                                    {firstSummary.title}
+                                </div>
+                            )}
+                            <p className="text-sm text-gray-700 whitespace-pre-line">
+                                {firstSummary.summaryText}
+                            </p>
+                        </>
+                    ) : (
+                        <p className="text-sm text-gray-600">No summary available yet.</p>
+                    )}
                 </div>
 
                 <div className="rounded-2xl bg-white p-6 shadow-sm md:col-span-1">

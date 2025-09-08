@@ -19,7 +19,7 @@ export type DocumentListItemDTO = {
 };
 
 // === Detail DTO (detail view) ===
-export type SummaryDTO = { text: string };
+export type SummaryDTO = { title: string; summaryText: string };
 export type ExtractedFieldDTO = { name: string; value: string };
 
 export type DocumentDetailDTO = {
