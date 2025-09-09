@@ -52,3 +52,13 @@ export async function uploadDocument(
 export function buildDownloadUrl(id: string) {
     return api(`/api/documents/${id}/download`);
 }
+
+// DELETE (delete one document by id)
+export async function deleteDocument(id: string): Promise<void> {
+    const url = api(`/api/documents/${id}`);
+    const res = await fetch(url, { method: "DELETE" });
+    if (!res.ok && res.status !== 204) {
+        const msg = await res.text().catch(() => "");
+        throw new Error(msg || `Delete failed (${res.status})`);
+    }
+}

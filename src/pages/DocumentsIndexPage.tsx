@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { listDocuments } from "../api/documents";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { listDocuments, deleteDocument } from "../api/documents";
 import StatusPill from "../components/StatusPill";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -8,16 +8,24 @@ import type { DocumentListItemDTO, Page } from "../api/types";
 
 export default function DocumentsIndexPage() {
     const [q, setQ] = useState("");
+    const qc = useQueryClient();
 
     const { data, isLoading, isError, refetch } = useQuery<Page<DocumentListItemDTO>>({
         queryKey: ["documents", { page: 1, pageSize: 25, q }],
-        // v5: use params from queryKey so cache keys and fetch args match
         queryFn: ({ queryKey }) => {
             const [, params] = queryKey as [
                 "documents",
                 { page: number; pageSize: number; q: string }
             ];
             return listDocuments(params);
+        },
+    });
+
+    const remove = useMutation({
+        mutationFn: (id: string) => deleteDocument(id),
+        onSuccess: () => {
+            // refresh the list after a successful delete
+            qc.invalidateQueries({ queryKey: ["documents"] });
         },
     });
 
@@ -45,7 +53,7 @@ export default function DocumentsIndexPage() {
                         <th className="p-3 w-24">Size</th>
                         <th className="p-3 w-40">Created</th>
                         <th className="p-3 w-28">Status</th>
-                        <th className="p-3 w-16">Actions</th>
+                        <th className="p-3 w-28">Actions</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y">
@@ -84,10 +92,25 @@ export default function DocumentsIndexPage() {
                             <td className="p-3">
                                 <StatusPill status={toUiStatus(d.status)} />
                             </td>
-                            <td className="p-3 text-center">
-                                <Link to={`/documents/${d.id}`} className="text-sm underline">
-                                    View
-                                </Link>
+                            <td className="p-3">
+                                <div className="flex items-center gap-3">
+                                    <Link to={`/documents/${d.id}`} className="text-sm underline">
+                                        View
+                                    </Link>
+                                    <button
+                                        disabled={remove.isPending}
+                                        onClick={() => {
+                                            if (!window.confirm("Delete this document? This cannot be undone.")) return;
+                                            remove.mutate(d.id);
+                                        }}
+                                        className={`text-sm ${
+                                            remove.isPending ? "text-gray-400" : "text-red-600 hover:underline"
+                                        }`}
+                                        title="Delete"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}
