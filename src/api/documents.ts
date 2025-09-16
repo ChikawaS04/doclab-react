@@ -4,7 +4,7 @@ import { normalizePage } from "./pageAdapter";
 import type {
     DocumentListItemDTO,
     DocumentDetailDTO,
-    Page,
+    //Page,
     PageResponse,
     UploadResponse,
 } from "./types";
@@ -13,17 +13,17 @@ const BASE = (import.meta as any).env?.VITE_API_BASE_URL || "";
 const api = (p: string) => `${BASE.replace(/\/+$/, "")}${p.startsWith("/") ? "" : "/"}${p}`;
 
 // LIST
-export async function listDocuments(params: {
-    page?: number; pageSize?: number; q?: string;
-} = {}): Promise<Page<DocumentListItemDTO>> {
+export async function listDocuments(params: { page?: number; pageSize?: number; q?: string; sort?: string } = {}) {
     const qs = buildQuery({
-        page: (params.page ?? 1) - 1,     // backend likely expects 0-based
+        page: (params.page ?? 1) - 1,
         size: params.pageSize ?? 25,
         q: params.q,
+        sort: params.sort, // e.g., "uploadDate,desc"
     });
     const raw = await fetchJson<PageResponse<DocumentListItemDTO>>(`/api/documents${qs}`);
     return normalizePage(raw);
 }
+
 
 // DETAIL
 export async function getDocument(id: string): Promise<DocumentDetailDTO> {
