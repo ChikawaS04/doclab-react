@@ -56,7 +56,7 @@ export default function DocumentsIndexPage() {
                         }
                     }}
                     placeholder="Search by ID, file name, or doc type…"
-                    className="rounded-xl border px-3 py-2 text-sm"
+                    className="w-96 rounded-xl border px-3 py-2 text-sm"
                 />
                 <select
                     value={sort}
