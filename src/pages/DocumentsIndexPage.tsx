@@ -274,34 +274,27 @@ function EllipsisMenu({
             {open && (
                 <div
                     role="menu"
-                    className="absolute right-0 z-20 mt-2 w-36 rounded-[12px] bg-white shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),0_4px_6px_-4px_rgba(0,0,0,0.1)] border p-2"
+                    className="absolute right-0 z-20 mt-2 w-40 rounded-xl bg-white border shadow-lg p-1"
                 >
                     <button
                         role="menuitem"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setOpen(false);
-                            onView();
-                        }}
-                        className="flex w-full items-center gap-2 rounded-[10px] px-3 py-2 hover:bg-[#f1f5f9] text-[#0f172a]"
+                        onClick={(e) => { e.stopPropagation(); setOpen(false); onView(); }}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 hover:bg-gray-100 text-gray-800"
                     >
-                        <EyeIcon />
+                        <EyeIcon className="w-4 h-4" />
                         <span>View</span>
                     </button>
                     <button
                         role="menuitem"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setOpen(false);
-                            onDelete();
-                        }}
-                        className="mt-1 flex w-full items-center gap-2 rounded-[10px] px-3 py-2 hover:bg-[#fee2e2] text-[#dc2626]"
+                        onClick={(e) => { e.stopPropagation(); setOpen(false); onDelete(); }}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-50 text-red-600 mt-1"
                     >
-                        <TrashIcon />
+                        <TrashIcon className="w-4 h-4" />
                         <span>Delete</span>
                     </button>
                 </div>
             )}
+
         </div>
     );
 }
