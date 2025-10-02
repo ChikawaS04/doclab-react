@@ -13,16 +13,25 @@ const BASE = (import.meta as any).env?.VITE_API_BASE_URL || "";
 const api = (p: string) => `${BASE.replace(/\/+$/, "")}${p.startsWith("/") ? "" : "/"}${p}`;
 
 // LIST
-export async function listDocuments(params: { page?: number; pageSize?: number; q?: string; sort?: string } = {}) {
-    const qs = buildQuery({
-        page: (params.page ?? 1) - 1,
+type ListParams = { page?: number; pageSize?: number; q?: string; sort?: string };
+
+// flip to true only when the backend supports `?sort=uploadDate,desc|asc`
+const INCLUDE_SORT = false;
+
+export async function listDocuments(params: ListParams = {}) {
+    const queryObj: Record<string, string | number | undefined> = {
+        page: (params.page ?? 1) - 1,     // API is 0-based; UI is 1-based
         size: params.pageSize ?? 25,
-        q: params.q,
-        sort: params.sort, // e.g., "uploadDate,desc"
-    });
+    };
+
+    if (params.q && params.q.trim()) queryObj.q = params.q.trim();
+    if (INCLUDE_SORT && params.sort) queryObj.sort = params.sort;
+
+    const qs = buildQuery(queryObj);
     const raw = await fetchJson<PageResponse<DocumentListItemDTO>>(`/api/documents${qs}`);
     return normalizePage(raw);
 }
+
 
 
 // DETAIL
