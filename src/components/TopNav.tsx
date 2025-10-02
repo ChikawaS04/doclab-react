@@ -2,30 +2,55 @@ import { Link, NavLink } from "react-router-dom";
 
 export default function TopNav() {
     const linkBase =
-        "rounded-lg px-3 py-2 text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500";
+        "rounded-xl px-3.5 py-2 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ring)]";
 
     return (
         <header className="border-b bg-white">
-            <div className="container mx-auto max-w-6xl px-6 py-3 flex items-center justify-between">
-                {/* Brand → click to go home (Upload page) */}
-                <Link to="/" className="text-xl font-bold tracking-tight hover:opacity-90">
-                    DocLab
+            <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10 py-3 flex items-center justify-between">
+                {/* Brand */}
+                <Link to="/" className="flex items-center gap-3 group">
+                    <div className="h-9 w-9 rounded-2xl bg-[var(--doclab-blue-600)] text-white grid place-items-center shadow-sm">
+                        {/* inline doc icon */}
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                            <path d="M7 3h7l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="white" strokeWidth="1.6"/>
+                            <path d="M14 3v5h5" stroke="white" strokeWidth="1.6"/>
+                            <path d="M8.5 12h7M8.5 15h7M8.5 18h7" stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+                        </svg>
+                    </div>
+                    <div className="leading-tight">
+                        <div className="text-heading text-[20px] tracking-tight">DocLab</div>
+                        <div className="text-[12px] text-[color:var(--doclab-slate-500)] -mt-0.5">
+                            Document Intelligence
+                        </div>
+                    </div>
                 </Link>
 
+                {/* Nav */}
                 <nav className="flex items-center gap-2">
                     <NavLink
                         to="/"
-                        className={({ isActive }) =>
-                            `${linkBase} ${isActive ? "bg-gray-100 font-medium" : "text-gray-700"}`
-                        }
                         end
+                        className={({ isActive }) =>
+                            [
+                                linkBase,
+                                isActive
+                                    ? "bg-[var(--doclab-blue-50)] text-[var(--doclab-blue-700)]"
+                                    : "text-[color:var(--doclab-slate-700)] hover:bg-[var(--doclab-slate-100)]",
+                            ].join(" ")
+                        }
                     >
                         Upload
                     </NavLink>
+
                     <NavLink
                         to="/documents"
                         className={({ isActive }) =>
-                            `${linkBase} ${isActive ? "bg-gray-100 font-medium" : "text-gray-700"}`
+                            [
+                                linkBase,
+                                isActive
+                                    ? "bg-[var(--doclab-blue-50)] text-[var(--doclab-blue-700)]"
+                                    : "text-[color:var(--doclab-slate-700)] hover:bg-[var(--doclab-slate-100)]",
+                            ].join(" ")
                         }
                     >
                         Documents
