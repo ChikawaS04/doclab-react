@@ -137,6 +137,7 @@ export default function DocumentsIndexPage() {
 
             {/* Table card */}
             <div className="bg-white border rounded-[12px] shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
                 <table className="w-full table-fixed">
                     <thead className="bg-[#f8fafc] text-left text-[14px] text-[#475569]">
                     <tr>
@@ -215,6 +216,7 @@ export default function DocumentsIndexPage() {
                     ))}
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     );
@@ -294,7 +296,6 @@ function EllipsisMenu({
                     </button>
                 </div>
             )}
-
         </div>
     );
 }

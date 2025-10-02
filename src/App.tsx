@@ -3,11 +3,12 @@ import TopNav from "./components/TopNav";
 
 export default function App() {
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900">
+        <div className="min-h-screen">
             <TopNav />
-            <main className="container mx-auto max-w-6xl px-6 py-8">
+            <main className="mx-auto w-full max-w-[1200px] px-6 md:px-10 py-8">
                 <Outlet />
             </main>
         </div>
     );
 }
+
