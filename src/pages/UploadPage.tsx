@@ -22,7 +22,7 @@ export default function UploadPage() {
     const mut = useMutation({
         mutationFn: (file: File) => uploadDocument(file, setProgress),
         onSuccess: (resp) => {
-            const id = (resp as any).id; // DocumentDetailDTO | DocumentDTO
+            const id = (resp as any).id;
             qc.invalidateQueries({ queryKey: ["documents"] });
             setProgress(null);
             nav(`/documents/${id}`);
@@ -38,7 +38,7 @@ export default function UploadPage() {
 
     return (
         <section className="space-y-10">
-            {/* Hidden file input (never show native control) */}
+            {/* Hidden file input */}
             <input
                 ref={fileInputRef}
                 type="file"
@@ -53,31 +53,24 @@ export default function UploadPage() {
                     "mx-auto max-w-4xl rounded-2xl border-2 border-dashed p-12 text-center shadow-sm transition",
                     "bg-white/90 backdrop-blur",
                     dragOver
-                        ? "border-[color:var(--doclab-blue-400)] bg-[color:var(--doclab-blue-50)]"
-                        : "border-[color:var(--doclab-slate-300)]",
+                        ? "border-[var(--doclab-blue-400)] bg-[var(--doclab-blue-50)]"
+                        : "border-[var(--doclab-slate-300)]",
                 ].join(" ")}
-                onDragOver={(e) => {
-                    e.preventDefault();
-                    setDragOver(true);
-                }}
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={() => setDragOver(false)}
-                onDrop={(e) => {
-                    e.preventDefault();
-                    setDragOver(false);
-                    onFiles(e.dataTransfer.files);
-                }}
+                onDrop={(e) => { e.preventDefault(); setDragOver(false); onFiles(e.dataTransfer.files); }}
             >
                 {/* icon */}
-                <div className="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-2xl bg-[color:var(--doclab-slate-100)] shadow-sm">
+                <div className="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-2xl bg-[var(--doclab-slate-100)] shadow-sm">
                     <UploadIcon />
                 </div>
 
                 <h1 className="text-heading text-[28px] mb-2">Upload Document</h1>
-                <p className="text-[16px] text-[color:var(--doclab-slate-600)]">
+                <p className="text-[16px] text-[var(--doclab-slate-600)]">
                     Drag and drop your file here, or click to browse
                 </p>
 
-                {/* Button that triggers hidden input */}
+                {/* Button */}
                 <div className="mt-8 flex items-center justify-center gap-3">
                     <button
                         type="button"
@@ -87,45 +80,42 @@ export default function UploadPage() {
                         Choose File
                     </button>
                     {mut.isPending && (
-                        <span className="text-sm text-[color:var(--doclab-slate-600)]">Uploading…</span>
+                        <span className="text-sm text-[var(--doclab-slate-600)]">Uploading…</span>
                     )}
                 </div>
 
-                {/* Progress bar */}
+                {/* Progress */}
                 {progress !== null && (
-                    <div className="mx-auto mt-4 h-2 w-80 overflow-hidden rounded-full bg-[color:var(--doclab-slate-200)]">
+                    <div className="mx-auto mt-4 h-2 w-80 overflow-hidden rounded-full bg-[var(--doclab-slate-200)]">
                         <div
-                            className="h-full bg-[color:var(--doclab-blue-600)] transition-all"
+                            className="h-full bg-[var(--doclab-blue-600)] transition-all"
                             style={{ width: `${progress}%` }}
                         />
                     </div>
                 )}
-                {mut.isError && (
-                    <div className="mt-3 text-sm text-red-600">Upload failed. Try again.</div>
-                )}
+                {mut.isError && <div className="mt-3 text-sm text-red-600">Upload failed. Try again.</div>}
 
-                {/* Supported types with dots */}
+                {/* Supported types */}
                 <div className="mt-6 flex items-center justify-center gap-6 text-sm">
-                    <TypeDot label="PDF" className="bg-[color:var(--doclab-blue-500)]" />
-                    <TypeDot label="DOCX" className="bg-[color:var(--doclab-blue-300)]" />
-                    <TypeDot label="TXT" className="bg-[color:var(--doclab-slate-400)]" />
+                    <TypeDot label="PDF" className="bg-[var(--doclab-blue-500)]" />
+                    <TypeDot label="DOCX" className="bg-[var(--doclab-blue-300)]" />
+                    <TypeDot label="TXT" className="bg-[var(--doclab-slate-400)]" />
                 </div>
             </div>
 
             {/* Recent uploads */}
             <div className="space-y-2">
                 <h2 className="text-heading text-[24px]">Recent Uploads</h2>
-                <p className="text-sm text-[color:var(--doclab-slate-600)]">Your latest documents</p>
+                <p className="text-sm text-[var(--doclab-slate-600)]">Your latest documents</p>
 
                 <div className="mt-4 rounded-2xl bg-white shadow-sm">
                     {recent.isLoading && (
-                        <div className="p-6 text-center text-sm text-[color:var(--doclab-slate-600)]">Loading…</div>
+                        <div className="p-6 text-center text-sm text-[var(--doclab-slate-600)]">Loading…</div>
                     )}
 
                     {recent.isError && (
                         <div className="p-6 text-center text-sm text-red-600">
-                            Failed to load
-                            {recent.error instanceof Error ? `: ${recent.error.message}` : "."}
+                            Failed to load{recent.error instanceof Error ? `: ${recent.error.message}` : "."}
                         </div>
                     )}
 
@@ -133,21 +123,21 @@ export default function UploadPage() {
                         ? recent.data.items.map((d) => (
                             <div
                                 key={d.id}
-                                className="flex items-center justify-between gap-4 px-5 py-4 first:rounded-t-2xl last:rounded-b-2xl hover:bg-[color:var(--doclab-slate-50)] border-b last:border-b-0"
+                                className="flex items-center justify-between gap-4 px-5 py-4 first:rounded-t-2xl last:rounded-b-2xl hover:bg-[var(--doclab-slate-50)] border-b last:border-b-0"
                             >
                                 <div className="flex items-center gap-3 min-w-0">
-                                    <div className="grid h-9 w-9 place-items-center rounded-full bg-[color:var(--doclab-slate-100)]">
+                                    <div className="grid h-9 w-9 place-items-center rounded-full bg-[var(--doclab-slate-100)]">
                                         <FileIcon />
                                     </div>
                                     <div className="min-w-0">
                                         <Link
                                             to={`/documents/${d.id}`}
-                                            className="block truncate text-[15px] text-[color:var(--doclab-slate-900)] hover:underline"
+                                            className="block truncate text-[15px] text-[var(--doclab-slate-900)] hover:underline"
                                             title={d.fileName}
                                         >
                                             {d.fileName}
                                         </Link>
-                                        <div className="text-xs text-[color:var(--doclab-slate-500)]">
+                                        <div className="text-xs text-[var(--doclab-slate-500)]">
                                             {safeDateStr(d.uploadDate)}
                                         </div>
                                     </div>
@@ -159,7 +149,7 @@ export default function UploadPage() {
                             </div>
                         ))
                         : !recent.isLoading && (
-                        <div className="p-6 text-center text-sm text-[color:var(--doclab-slate-600)]">
+                        <div className="p-6 text-center text-sm text-[var(--doclab-slate-600)]">
                             No uploads yet.
                         </div>
                     )}
@@ -169,7 +159,7 @@ export default function UploadPage() {
     );
 }
 
-/* ---------------- icons & bits ---------------- */
+/* ---------------- icons ---------------- */
 function UploadIcon() {
     return (
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="1.6">
@@ -179,7 +169,6 @@ function UploadIcon() {
         </svg>
     );
 }
-
 function FileIcon() {
     return (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="1.6">
@@ -188,12 +177,11 @@ function FileIcon() {
         </svg>
     );
 }
-
 function TypeDot({ label, className }: { label: string; className: string }) {
     return (
         <span className="inline-flex items-center gap-2">
       <span className={`h-2.5 w-2.5 rounded-full ${className}`} />
-      <span className="text-[color:var(--doclab-slate-700)]">{label}</span>
+      <span className="text-[var(--doclab-slate-700)]">{label}</span>
     </span>
     );
 }

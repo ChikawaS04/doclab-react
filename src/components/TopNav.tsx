@@ -16,9 +16,7 @@ export default function TopNav() {
     return (
         <header
             className={[
-                // sticky + glass
                 "sticky top-0 z-40 backdrop-blur bg-white/80 border-b",
-                // elevate after scroll for depth
                 scrolled ? "shadow-sm" : "shadow-none",
             ].join(" ")}
         >
@@ -26,7 +24,6 @@ export default function TopNav() {
                 {/* Brand */}
                 <Link to="/" className="flex items-center gap-3 group">
                     <div className="h-9 w-9 rounded-2xl bg-[var(--doclab-blue-600)] text-white grid place-items-center shadow-sm">
-                        {/* inline doc icon */}
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                             <path d="M7 3h7l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="white" strokeWidth="1.6"/>
                             <path d="M14 3v5h5" stroke="white" strokeWidth="1.6"/>
@@ -35,7 +32,7 @@ export default function TopNav() {
                     </div>
                     <div className="leading-tight">
                         <div className="text-heading text-[20px] tracking-tight">DocLab</div>
-                        <div className="text-[12px] text-[color:var(--doclab-slate-500)] -mt-0.5">
+                        <div className="text-[12px] text-[var(--doclab-slate-500)] -mt-0.5">
                             Document Intelligence
                         </div>
                     </div>
@@ -51,7 +48,7 @@ export default function TopNav() {
                                 linkBase,
                                 isActive
                                     ? "bg-[var(--doclab-blue-50)] text-[var(--doclab-blue-700)]"
-                                    : "text-[color:var(--doclab-slate-700)] hover:bg-[var(--doclab-slate-100)]",
+                                    : "text-[var(--doclab-slate-700)] hover:bg-[var(--doclab-slate-100)]",
                             ].join(" ")
                         }
                     >
@@ -65,7 +62,7 @@ export default function TopNav() {
                                 linkBase,
                                 isActive
                                     ? "bg-[var(--doclab-blue-50)] text-[var(--doclab-blue-700)]"
-                                    : "text-[color:var(--doclab-slate-700)] hover:bg-[var(--doclab-slate-100)]",
+                                    : "text-[var(--doclab-slate-700)] hover:bg-[var(--doclab-slate-100)]",
                             ].join(" ")
                         }
                     >
