@@ -37,8 +37,8 @@ export default function UploadPage() {
     }
 
     return (
-        <section className="space-y-10">
-            {/* Hidden file input */}
+        <section className="app-container space-y-10 py-8">
+            {/* Hidden input (avoid native button) */}
             <input
                 ref={fileInputRef}
                 type="file"
@@ -47,99 +47,86 @@ export default function UploadPage() {
                 onChange={(e) => onFiles(e.target.files)}
             />
 
-            {/* Dropzone card */}
+            {/* Dropzone */}
             <div
                 className={[
-                    "mx-auto max-w-4xl rounded-2xl border-2 border-dashed p-12 text-center shadow-sm transition",
-                    "bg-white/90 backdrop-blur",
-                    dragOver
-                        ? "border-[var(--doclab-blue-400)] bg-[var(--doclab-blue-50)]"
-                        : "border-[var(--doclab-slate-300)]",
+                    "card border-2 border-dashed p-12 text-center transition",
+                    dragOver ? "border-blue-400 bg-blue-50" : "border-gray-300",
                 ].join(" ")}
                 onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={(e) => { e.preventDefault(); setDragOver(false); onFiles(e.dataTransfer.files); }}
             >
-                {/* icon */}
-                <div className="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-2xl bg-[var(--doclab-slate-100)] shadow-sm">
+                <div className="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-2xl bg-gray-100 text-gray-700 shadow-sm">
                     <UploadIcon />
                 </div>
 
-                <h1 className="text-heading text-[28px] mb-2">Upload Document</h1>
-                <p className="text-[16px] text-[var(--doclab-slate-600)]">
+                <h1 className="mb-2 text-2xl font-semibold tracking-tight">Upload Document</h1>
+                <p className="text-base text-gray-600">
                     Drag and drop your file here, or click to browse
                 </p>
 
-                {/* Button */}
                 <div className="mt-8 flex items-center justify-center gap-3">
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="btn-primary inline-flex items-center rounded-xl px-6 py-3 text-white"
+                        className="rounded-xl bg-blue-600 px-6 py-3 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     >
                         Choose File
                     </button>
-                    {mut.isPending && (
-                        <span className="text-sm text-[var(--doclab-slate-600)]">Uploading…</span>
-                    )}
+                    {mut.isPending && <span className="text-sm text-gray-600">Uploading…</span>}
                 </div>
 
-                {/* Progress */}
                 {progress !== null && (
-                    <div className="mx-auto mt-4 h-2 w-80 overflow-hidden rounded-full bg-[var(--doclab-slate-200)]">
-                        <div
-                            className="h-full bg-[var(--doclab-blue-600)] transition-all"
-                            style={{ width: `${progress}%` }}
-                        />
+                    <div className="mx-auto mt-4 h-2 w-80 overflow-hidden rounded-full bg-gray-200">
+                        <div className="h-full bg-blue-600 transition-all" style={{ width: `${progress}%` }} />
                     </div>
                 )}
                 {mut.isError && <div className="mt-3 text-sm text-red-600">Upload failed. Try again.</div>}
 
-                {/* Supported types */}
-                <div className="mt-6 flex items-center justify-center gap-6 text-sm">
-                    <TypeDot label="PDF" className="bg-[var(--doclab-blue-500)]" />
-                    <TypeDot label="DOCX" className="bg-[var(--doclab-blue-300)]" />
-                    <TypeDot label="TXT" className="bg-[var(--doclab-slate-400)]" />
+                <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-700">
+                    <TypeDot label="PDF" dotClass="bg-blue-600" />
+                    <TypeDot label="DOCX" dotClass="bg-blue-400" />
+                    <TypeDot label="TXT" dotClass="bg-gray-400" />
                 </div>
             </div>
 
             {/* Recent uploads */}
             <div className="space-y-2">
-                <h2 className="text-heading text-[24px]">Recent Uploads</h2>
-                <p className="text-sm text-[var(--doclab-slate-600)]">Your latest documents</p>
+                <h2 className="text-xl font-semibold tracking-tight">Recent Uploads</h2>
+                <p className="text-sm text-gray-600">Your latest documents</p>
 
-                <div className="mt-4 rounded-2xl bg-white shadow-sm">
+                <div className="card mt-4 divide-y">
                     {recent.isLoading && (
-                        <div className="p-6 text-center text-sm text-[var(--doclab-slate-600)]">Loading…</div>
+                        <div className="p-6 text-center text-sm text-gray-600">Loading…</div>
                     )}
 
                     {recent.isError && (
                         <div className="p-6 text-center text-sm text-red-600">
-                            Failed to load{recent.error instanceof Error ? `: ${recent.error.message}` : "."}
+                            Failed to load
+                            {recent.error instanceof Error ? `: ${recent.error.message}` : "."}
                         </div>
                     )}
 
-                    {recent.data?.items?.length
-                        ? recent.data.items.map((d) => (
+                    {recent.data?.items?.length ? (
+                        recent.data.items.map((d) => (
                             <div
                                 key={d.id}
-                                className="flex items-center justify-between gap-4 px-5 py-4 first:rounded-t-2xl last:rounded-b-2xl hover:bg-[var(--doclab-slate-50)] border-b last:border-b-0"
+                                className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-gray-50"
                             >
                                 <div className="flex items-center gap-3 min-w-0">
-                                    <div className="grid h-9 w-9 place-items-center rounded-full bg-[var(--doclab-slate-100)]">
+                                    <div className="grid h-9 w-9 place-items-center rounded-full bg-gray-100">
                                         <FileIcon />
                                     </div>
                                     <div className="min-w-0">
                                         <Link
                                             to={`/documents/${d.id}`}
-                                            className="block truncate text-[15px] text-[var(--doclab-slate-900)] hover:underline"
+                                            className="block truncate text-[15px] text-gray-900 hover:underline"
                                             title={d.fileName}
                                         >
                                             {d.fileName}
                                         </Link>
-                                        <div className="text-xs text-[var(--doclab-slate-500)]">
-                                            {safeDateStr(d.uploadDate)}
-                                        </div>
+                                        <div className="text-xs text-gray-500">{safeDateStr(d.uploadDate)}</div>
                                     </div>
                                 </div>
 
@@ -148,10 +135,10 @@ export default function UploadPage() {
                                 </div>
                             </div>
                         ))
-                        : !recent.isLoading && (
-                        <div className="p-6 text-center text-sm text-[var(--doclab-slate-600)]">
-                            No uploads yet.
-                        </div>
+                    ) : (
+                        !recent.isLoading && (
+                            <div className="p-6 text-center text-sm text-gray-600">No uploads yet.</div>
+                        )
                     )}
                 </div>
             </div>
@@ -159,7 +146,6 @@ export default function UploadPage() {
     );
 }
 
-/* ---------------- icons ---------------- */
 function UploadIcon() {
     return (
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="1.6">
@@ -169,6 +155,7 @@ function UploadIcon() {
         </svg>
     );
 }
+
 function FileIcon() {
     return (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="1.6">
@@ -177,11 +164,12 @@ function FileIcon() {
         </svg>
     );
 }
-function TypeDot({ label, className }: { label: string; className: string }) {
+
+function TypeDot({ label, dotClass }: { label: string; dotClass: string }) {
     return (
         <span className="inline-flex items-center gap-2">
-      <span className={`h-2.5 w-2.5 rounded-full ${className}`} />
-      <span className="text-[var(--doclab-slate-700)]">{label}</span>
+      <span className={`h-2.5 w-2.5 rounded-full ${dotClass}`} />
+      <span>{label}</span>
     </span>
     );
 }
