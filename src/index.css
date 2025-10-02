@@ -1,19 +1,8 @@
-/* -----------------------------------------------------------
-   DocLab Global Styles (Light mode only)
-   - Tailwind + minimal CSS variables
-   - No dark mode in this pass
------------------------------------------------------------ */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-/* Tailwind entry points */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* -----------------------------------------------------------
-   1) Tokens (light)
------------------------------------------------------------ */
+/* ---------- 1) DocLab design tokens (light mode) ---------- */
 :root {
     /* Brand Blues */
     --doclab-blue-50:  #eff6ff;
@@ -28,7 +17,7 @@
     --doclab-blue-900: #1e293b;
     --doclab-blue-950: #0f172a;
 
-    /* Neutrals (Slate) */
+    /* Slate Neutrals */
     --doclab-slate-50:  #f8fafc;
     --doclab-slate-100: #f1f5f9;
     --doclab-slate-200: #e2e8f0;
@@ -40,179 +29,79 @@
     --doclab-slate-800: #1e293b;
     --doclab-slate-900: #0f172a;
 
-    /* Core (Light) */
+    /* Core tokens */
     --background: var(--doclab-slate-50);
     --foreground: var(--doclab-slate-900);
     --card: #ffffff;
     --card-foreground: var(--doclab-slate-800);
+
     --primary: var(--doclab-blue-600);
     --primary-foreground: #ffffff;
-    --secondary: var(--doclab-blue-50);
-    --secondary-foreground: var(--doclab-blue-900);
-    --muted: var(--doclab-slate-100);
-    --muted-foreground: var(--doclab-slate-500);
-    --accent: var(--doclab-blue-100);
-    --accent-foreground: var(--doclab-blue-800);
+
     --border: var(--doclab-slate-200);
-    --input-background: #ffffff;
-    --destructive: #ef4444;
     --ring: var(--doclab-blue-500);
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, var(--doclab-blue-600) 0%, var(--doclab-blue-700) 100%);
-    --gradient-secondary: linear-gradient(135deg, var(--doclab-slate-100) 0%, var(--doclab-blue-50) 100%);
-    --gradient-accent: linear-gradient(135deg, var(--doclab-blue-50) 0%, var(--doclab-blue-100) 100%);
-
-    /* Shadows */
+    /* shadows + radius */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     --shadow-blue: 0 4px 14px 0 rgb(59 130 246 / 0.15);
     --shadow-blue-lg: 0 10px 25px -5px rgb(59 130 246 / 0.25);
 
-    /* Radius */
     --radius: 12px;
-    --radius-sm: 8px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
-
-    /* Chart palette */
-    --chart-1: #3b82f6;
-    --chart-2: #60a5fa;
-    --chart-3: #94a3b8;
-    --chart-4: #1d4ed8;
-    --chart-5: #93c5fd;
 }
 
-/* -----------------------------------------------------------
-   2) Base element styling
------------------------------------------------------------ */
+/* ---------- 2) Base resets ---------- */
 @layer base {
+    /* Keep this simple — no variants in @apply */
     * {
-        /*@apply border-transparent outline-blue-500/50;*/
         @apply border-transparent;
-        /* outline color is handled per-component with ring utilities */
     }
-
-    html { font-size: 16px; }
-
     body {
-        @apply antialiased;
+        @apply text-base;
         background: var(--background);
         color: var(--foreground);
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        font-feature-settings: 'cv02','cv03','cv04','cv11';
-        font-optical-sizing: auto;
-
-        /* subtle depth background */
-        background-image:
-                radial-gradient(circle at 20% 80%, rgba(59,130,246,0.06) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(59,130,246,0.05) 0%, transparent 50%);
-    }
-
-    /* Automatic typography when no Tailwind text-* set */
-    :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
-        h1 { font-size: 1.75rem; font-weight: 600; line-height: 1.3; letter-spacing: -0.02em; }
-        h2 { font-size: 1.375rem; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em; }
-        h3 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
-        h4 { font-size: 1rem;    font-weight: 600; line-height: 1.5; }
-        p  { font-size: 1rem;    font-weight: 400; line-height: 1.6; color: var(--doclab-slate-700); }
-        label { font-size: .875rem; font-weight: 500; letter-spacing: .025em; text-transform: uppercase; color: var(--doclab-slate-600); }
-        button, input { font-size: 1rem; }
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 }
 
-/* -----------------------------------------------------------
-   3) Utility classes (atoms)
------------------------------------------------------------ */
+/* ---------- 3) Small design helpers we actually use ---------- */
 @layer components {
-    .app-container { @apply mx-auto w-full max-w-[1200px] px-6 md:px-10; }
+    /* Container that centers content and constrains width */
+    .app-container {
+        @apply mx-auto w-full px-6;
+        max-width: 1200px;
+    }
+    @screen md {
+        .app-container { @apply px-8; }
+    }
 
+    /* Card */
     .card {
-        background: var(--card);
-        color: var(--card-foreground);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
+        @apply rounded-2xl border bg-white;
+        border-color: var(--border);
         box-shadow: var(--shadow-sm);
     }
 
-    .card-gradient {
-        background: linear-gradient(135deg, #fff 0%, rgba(239,246,255,0.6) 100%);
-        border: 1px solid rgba(59,130,246,0.12);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow-md);
+    /* Dropzone dashed outline */
+    .dropzone-outline {
+        border: 2px dashed var(--doclab-blue-300);
     }
 
-    .card-hover { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
-    .card-hover:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: rgba(59,130,246,0.2); }
-
+    /* Primary button */
     .btn-primary {
-        background: var(--gradient-primary);
-        color: var(--primary-foreground);
-        border-radius: 12px;
-        padding: .625rem 1rem;
+        @apply inline-flex items-center justify-center rounded-xl text-white transition;
+        background: var(--primary);
         box-shadow: var(--shadow-blue);
-        transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
     }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow-blue-lg); }
-    .btn-primary:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
-
-    .glass {
-        background: rgba(255,255,255,0.92);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(59,130,246,0.12);
-        border-radius: var(--radius);
+    .btn-primary:hover {
+        background: var(--doclab-blue-700);
+        box-shadow: var(--shadow-blue-lg);
     }
 
-    .input-enhanced {
-        background: var(--input-background);
-        border: 1px solid rgba(59,130,246,0.20);
-        border-radius: 10px;
-        padding: .5rem .75rem;
-        transition: box-shadow .2s ease, border-color .2s ease;
+    /* Headings (used in Upload page) */
+    .text-heading {
+        @apply font-semibold tracking-tight;
+        letter-spacing: -0.02em;
     }
-    .input-enhanced:focus {
-        border-color: var(--doclab-blue-500);
-        box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
-        outline: none;
-    }
-
-    /* Status (used by StatusPill or anywhere) */
-    .pill { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
-    .pill--ready       { background: linear-gradient(135deg,#10b981 0%,#059669 100%); color: #fff; }
-    .pill--processing  { background: linear-gradient(135deg,#f59e0b 0%,#d97706 100%); color: #fff; }
-    .pill--failed      { background: linear-gradient(135deg,#ef4444 0%,#dc2626 100%); color: #fff; }
-
-    /* Table header */
-    .table-head { @apply bg-gray-50 text-left text-sm text-gray-600; }
-
-    /* Simple menu panel */
-    .menu {
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        box-shadow: var(--shadow-lg);
-        padding: .5rem;
-    }
-
-    /* Brand typography helpers */
-    .text-brand {
-        font-weight: 600;
-        background: linear-gradient(135deg, var(--doclab-slate-900) 0%, var(--doclab-blue-800) 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        letter-spacing: -0.025em;
-    }
-    .text-mono { font-family: 'JetBrains Mono','Fira Code',Consolas,'Liberation Mono',Menlo,monospace; font-weight: 500; }
-    .text-heading { font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; }
-    .text-subheading { font-weight: 500; letter-spacing: -0.01em; color: var(--doclab-slate-600); }
-    .text-label { font-weight: 500; font-size: .875rem; letter-spacing: .025em; text-transform: uppercase; color: var(--doclab-slate-500); }
-}
-
-/* Optional subtle dashed outline helper (for your dropzone) */
-.dropzone-outline {
-    border: 2px dashed var(--doclab-blue-300);
-    border-radius: var(--radius);
 }
