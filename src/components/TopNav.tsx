@@ -1,11 +1,27 @@
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
 export default function TopNav() {
+    const [scrolled, setScrolled] = useState(false);
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 0);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
     const linkBase =
         "rounded-xl px-3.5 py-2 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ring)]";
 
     return (
-        <header className="border-b bg-white">
+        <header
+            className={[
+                // sticky + glass
+                "sticky top-0 z-40 backdrop-blur bg-white/80 border-b",
+                // elevate after scroll for depth
+                scrolled ? "shadow-sm" : "shadow-none",
+            ].join(" ")}
+        >
             <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10 py-3 flex items-center justify-between">
                 {/* Brand */}
                 <Link to="/" className="flex items-center gap-3 group">
