@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { uploadDocument, listDocuments } from "../api/documents";
 import StatusPill from "../components/StatusPill";
@@ -9,6 +9,7 @@ export default function UploadPage() {
     const [dragOver, setDragOver] = useState(false);
     const [progress, setProgress] = useState<number | null>(null);
 
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const qc = useQueryClient();
     const nav = useNavigate();
 
@@ -37,10 +38,19 @@ export default function UploadPage() {
 
     return (
         <section className="space-y-10">
+            {/* Hidden file input (never show native control) */}
+            <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                onChange={(e) => onFiles(e.target.files)}
+            />
+
             {/* Dropzone card */}
             <div
                 className={[
-                    "mx-auto max-w-4xl rounded-2xl border border-dashed p-12 text-center shadow-sm transition",
+                    "mx-auto max-w-4xl rounded-2xl border-2 border-dashed p-12 text-center shadow-sm transition",
                     "bg-white/90 backdrop-blur",
                     dragOver
                         ? "border-[color:var(--doclab-blue-400)] bg-[color:var(--doclab-blue-50)]"
@@ -67,17 +77,15 @@ export default function UploadPage() {
                     Drag and drop your file here, or click to browse
                 </p>
 
-                {/* Button + hidden input */}
+                {/* Button that triggers hidden input */}
                 <div className="mt-8 flex items-center justify-center gap-3">
-                    <label className="btn-primary inline-flex cursor-pointer items-center rounded-xl px-6 py-3 text-white">
-                        <input
-                            type="file"
-                            className="hidden"
-                            accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
-                            onChange={(e) => onFiles(e.target.files)}
-                        />
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="btn-primary inline-flex items-center rounded-xl px-6 py-3 text-white"
+                    >
                         Choose File
-                    </label>
+                    </button>
                     {mut.isPending && (
                         <span className="text-sm text-[color:var(--doclab-slate-600)]">Uploading…</span>
                     )}
@@ -111,9 +119,7 @@ export default function UploadPage() {
 
                 <div className="mt-4 rounded-2xl bg-white shadow-sm">
                     {recent.isLoading && (
-                        <div className="p-6 text-center text-sm text-[color:var(--doclab-slate-600)]">
-                            Loading…
-                        </div>
+                        <div className="p-6 text-center text-sm text-[color:var(--doclab-slate-600)]">Loading…</div>
                     )}
 
                     {recent.isError && (
