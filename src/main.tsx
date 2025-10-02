@@ -7,7 +7,7 @@ import App from "./App";
 import UploadPage from "./pages/UploadPage";
 import DocumentsIndexPage from "./pages/DocumentsIndexPage";
 import DocumentDetailPage from "./pages/DocumentDetailPage";
-import "./pages/index.css";
+import "./index.css";
 
 const router = createBrowserRouter([
     {
