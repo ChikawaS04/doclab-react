@@ -88,17 +88,17 @@ export default function DocumentsIndexPage() {
                         onChange={(e) => setQ(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") {
-                                if (isUuidLike(q)) {
-                                    nav(`/documents/${q.trim()}`);
-                                } else {
+                                if (isUuidLike(q)) nav(`/documents/${q.trim()}`);
+                                else {
                                     setPage(1);
                                     refetch();
                                 }
                             }
                         }}
                         placeholder="Search by ID, file name, or doc type..."
-                        className="input-enhanced w-[520px] max-w-full rounded-[12px] px-4 py-3 outline-none"
+                        className="input-enhanced w-[520px] max-w-full rounded-xl px-4 py-3 text-sm focus:outline-none"
                     />
+
 
                     {/* Sort dropdown — visually matches “Created” chip */}
                     <SortDropdown
