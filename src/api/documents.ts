@@ -15,15 +15,14 @@ const api = (p: string) => `${BASE.replace(/\/+$/, "")}${p.startsWith("/") ? "" 
 // LIST
 type ListParams = { page?: number; pageSize?: number; q?: string; sort?: string };
 
-// flip to true only when the backend supports `?sort=uploadDate,desc|asc`
+// flip to true only when backend supports ?sort=uploadDate,desc|asc
 const INCLUDE_SORT = false;
 
 export async function listDocuments(params: ListParams = {}) {
     const queryObj: Record<string, string | number | undefined> = {
-        page: (params.page ?? 1) - 1,     // API is 0-based; UI is 1-based
+        page: (params.page ?? 1) - 1, // UI 1-based → API 0-based
         size: params.pageSize ?? 25,
     };
-
     if (params.q && params.q.trim()) queryObj.q = params.q.trim();
     if (INCLUDE_SORT && params.sort) queryObj.sort = params.sort;
 
@@ -32,10 +31,8 @@ export async function listDocuments(params: ListParams = {}) {
     return normalizePage(raw);
 }
 
-
-
 // DETAIL
-export async function getDocument(id: string): Promise<DocumentDetailDTO> {
+export async function getDocument(id: string) {
     return fetchJson<DocumentDetailDTO>(`/api/documents/${id}`);
 }
 
