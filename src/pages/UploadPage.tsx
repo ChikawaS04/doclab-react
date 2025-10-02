@@ -6,23 +6,27 @@ import { safeDateStr, toUiStatus } from "../lib/viewUtils";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function UploadPage() {
+    // local UI state
     const [dragOver, setDragOver] = useState(false);
     const [progress, setProgress] = useState<number | null>(null);
 
+    // infra
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const qc = useQueryClient();
     const nav = useNavigate();
 
+    // recent docs
     const recent = useQuery({
         queryKey: ["documents", { page: 1, pageSize: 5 }],
         queryFn: () => listDocuments({ page: 1, pageSize: 5 }),
         refetchOnWindowFocus: false,
     });
 
+    // upload
     const mut = useMutation({
         mutationFn: (file: File) => uploadDocument(file, setProgress),
         onSuccess: (resp) => {
-            const id = (resp as any).id;
+            const id = (resp as any).id; // DocumentDetailDTO | DocumentDTO
             qc.invalidateQueries({ queryKey: ["documents"] });
             setProgress(null);
             nav(`/documents/${id}`);
@@ -38,7 +42,7 @@ export default function UploadPage() {
 
     return (
         <section className="app-container space-y-10 py-8">
-            {/* Hidden input (avoid native button) */}
+            {/* hidden file input to avoid native button styling */}
             <input
                 ref={fileInputRef}
                 type="file"
@@ -47,21 +51,22 @@ export default function UploadPage() {
                 onChange={(e) => onFiles(e.target.files)}
             />
 
-            {/* Dropzone */}
+            {/* Dropzone card */}
             <div
                 className={[
-                    "card border-2 border-dashed p-12 text-center transition",
-                    dragOver ? "border-blue-400 bg-blue-50" : "border-gray-300",
+                    "card p-12 text-center dropzone-outline",
+                    dragOver ? "bg-[var(--doclab-blue-50)]" : "bg-white",
                 ].join(" ")}
                 onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={(e) => { e.preventDefault(); setDragOver(false); onFiles(e.dataTransfer.files); }}
             >
-                <div className="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-2xl bg-gray-100 text-gray-700 shadow-sm">
+                {/* icon */}
+                <div className="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-2xl bg-[var(--doclab-slate-100)] text-gray-700 shadow-sm">
                     <UploadIcon />
                 </div>
 
-                <h1 className="mb-2 text-2xl font-semibold tracking-tight">Upload Document</h1>
+                <h1 className="text-heading mb-2 text-[28px]">Upload Document</h1>
                 <p className="text-base text-gray-600">
                     Drag and drop your file here, or click to browse
                 </p>
@@ -70,74 +75,90 @@ export default function UploadPage() {
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="rounded-xl bg-blue-600 px-6 py-3 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                        className="btn-primary px-6 py-3"
                     >
                         Choose File
                     </button>
-                    {mut.isPending && <span className="text-sm text-gray-600">Uploading…</span>}
+                    {mut.isPending && (
+                        <span className="text-sm text-gray-600">Uploading…</span>
+                    )}
                 </div>
 
                 {progress !== null && (
                     <div className="mx-auto mt-4 h-2 w-80 overflow-hidden rounded-full bg-gray-200">
-                        <div className="h-full bg-blue-600 transition-all" style={{ width: `${progress}%` }} />
+                        <div
+                            className="h-full bg-[var(--doclab-blue-600)] transition-all"
+                            style={{ width: `${progress}%` }}
+                        />
                     </div>
                 )}
-                {mut.isError && <div className="mt-3 text-sm text-red-600">Upload failed. Try again.</div>}
+                {mut.isError && (
+                    <div className="mt-3 text-sm text-red-600">
+                        Upload failed. Try again.
+                    </div>
+                )}
 
-                <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-700">
-                    <TypeDot label="PDF" dotClass="bg-blue-600" />
-                    <TypeDot label="DOCX" dotClass="bg-blue-400" />
-                    <TypeDot label="TXT" dotClass="bg-gray-400" />
+                {/* file-type legend */}
+                <div className="mt-6 flex items-center justify-center gap-7 text-sm">
+                    <LegendDot label="PDF"  dotClass="bg-emerald-500" />
+                    <LegendDot label="DOCX" dotClass="bg-blue-500" />
+                    <LegendDot label="TXT"  dotClass="bg-purple-500" />
                 </div>
             </div>
 
             {/* Recent uploads */}
             <div className="space-y-2">
-                <h2 className="text-xl font-semibold tracking-tight">Recent Uploads</h2>
+                <h2 className="text-heading text-[22px]">Recent Uploads</h2>
                 <p className="text-sm text-gray-600">Your latest documents</p>
 
-                <div className="card mt-4 divide-y">
+                <div className="card mt-2 overflow-hidden">
                     {recent.isLoading && (
-                        <div className="p-6 text-center text-sm text-gray-600">Loading…</div>
+                        <div className="p-6 text-center text-sm text-gray-600">
+                            Loading…
+                        </div>
                     )}
 
                     {recent.isError && (
                         <div className="p-6 text-center text-sm text-red-600">
-                            Failed to load
-                            {recent.error instanceof Error ? `: ${recent.error.message}` : "."}
+                            Failed to load{recent.error instanceof Error ? `: ${recent.error.message}` : "."}
                         </div>
                     )}
 
                     {recent.data?.items?.length ? (
-                        recent.data.items.map((d) => (
-                            <div
-                                key={d.id}
-                                className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-gray-50"
-                            >
-                                <div className="flex items-center gap-3 min-w-0">
-                                    <div className="grid h-9 w-9 place-items-center rounded-full bg-gray-100">
-                                        <FileIcon />
-                                    </div>
-                                    <div className="min-w-0">
-                                        <Link
-                                            to={`/documents/${d.id}`}
-                                            className="block truncate text-[15px] text-gray-900 hover:underline"
-                                            title={d.fileName}
-                                        >
-                                            {d.fileName}
-                                        </Link>
-                                        <div className="text-xs text-gray-500">{safeDateStr(d.uploadDate)}</div>
-                                    </div>
-                                </div>
+                        <ul className="divide-y">
+                            {recent.data.items.map((d) => (
+                                <li key={d.id} className="px-5 py-4 hover:bg-gray-50">
+                                    <div className="flex items-center justify-between gap-4">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="grid h-10 w-10 place-items-center rounded-xl bg-gray-100">
+                                                <FileIcon />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <Link
+                                                    to={`/documents/${d.id}`}
+                                                    className="block truncate text-[15px] text-gray-900 hover:underline"
+                                                    title={d.fileName}
+                                                >
+                                                    {d.fileName}
+                                                </Link>
+                                                <div className="text-xs text-gray-500">
+                                                    {safeDateStr(d.uploadDate)}
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                <div className="shrink-0">
-                                    <StatusPill status={toUiStatus(d.status)} />
-                                </div>
-                            </div>
-                        ))
+                                        <div className="shrink-0">
+                                            <StatusPill status={toUiStatus(d.status)} />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
                     ) : (
                         !recent.isLoading && (
-                            <div className="p-6 text-center text-sm text-gray-600">No uploads yet.</div>
+                            <div className="p-6 text-center text-sm text-gray-600">
+                                No uploads yet.
+                            </div>
                         )
                     )}
                 </div>
@@ -146,16 +167,16 @@ export default function UploadPage() {
     );
 }
 
+/* ---------- tiny inline icons ---------- */
 function UploadIcon() {
     return (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="1.6">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="1.8">
             <path d="M12 16V7" strokeLinecap="round" />
             <path d="M8.5 10.5 12 7l3.5 3.5" strokeLinecap="round" />
             <rect x="4" y="16" width="16" height="4" rx="1.5" />
         </svg>
     );
 }
-
 function FileIcon() {
     return (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="1.6">
@@ -164,12 +185,11 @@ function FileIcon() {
         </svg>
     );
 }
-
-function TypeDot({ label, dotClass }: { label: string; dotClass: string }) {
+function LegendDot({ label, dotClass }: { label: string; dotClass: string }) {
     return (
         <span className="inline-flex items-center gap-2">
       <span className={`h-2.5 w-2.5 rounded-full ${dotClass}`} />
-      <span>{label}</span>
+      <span className="text-gray-700">{label}</span>
     </span>
     );
 }
