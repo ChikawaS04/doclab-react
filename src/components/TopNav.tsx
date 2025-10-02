@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 
 export default function TopNav() {
     const [scrolled, setScrolled] = useState(false);
+
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 0);
         onScroll();
@@ -11,7 +12,7 @@ export default function TopNav() {
     }, []);
 
     const linkBase =
-        "rounded-xl px-3.5 py-2 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+        "rounded-xl px-3.5 py-2 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]";
 
     return (
         <header
@@ -20,12 +21,13 @@ export default function TopNav() {
                 scrolled ? "shadow-sm" : "shadow-none",
             ].join(" ")}
         >
-            <div className="app-container py-3 flex items-center justify-between">
-                {/* Brand */}
-                <Link to="/" className="flex items-center gap-3">
-                    <div className="grid h-9 w-9 place-items-center rounded-2xl bg-blue-600 text-white">
+            {/* 3-column grid centers the nav regardless of brand width */}
+            <div className="app-container py-3 grid grid-cols-[1fr_auto_1fr] items-center">
+                {/* Brand (left) */}
+                <Link to="/" className="flex items-center gap-3 justify-self-start group">
+                    <div className="grid h-9 w-9 place-items-center rounded-2xl bg-[var(--doclab-blue-600)] text-white shadow-sm">
                         {/* simple doc icon */}
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M7 3h7l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="white" strokeWidth="1.6"/>
                             <path d="M14 3v5h5" stroke="white" strokeWidth="1.6"/>
                         </svg>
@@ -36,32 +38,40 @@ export default function TopNav() {
                     </div>
                 </Link>
 
-                {/* Nav */}
-                <nav className="flex items-center gap-2">
+                {/* Centered nav */}
+                <nav className="flex items-center gap-2 justify-self-center">
                     <NavLink
                         to="/"
                         end
                         className={({ isActive }) =>
                             [
                                 linkBase,
-                                isActive ? "bg-blue-50 text-blue-700" : "text-gray-700 hover:bg-gray-100",
+                                isActive
+                                    ? "bg-[var(--doclab-blue-50)] text-[var(--doclab-blue-700)]"
+                                    : "text-gray-700 hover:bg-gray-100",
                             ].join(" ")
                         }
                     >
                         Upload
                     </NavLink>
+
                     <NavLink
                         to="/documents"
                         className={({ isActive }) =>
                             [
                                 linkBase,
-                                isActive ? "bg-blue-50 text-blue-700" : "text-gray-700 hover:bg-gray-100",
+                                isActive
+                                    ? "bg-[var(--doclab-blue-50)] text-[var(--doclab-blue-700)]"
+                                    : "text-gray-700 hover:bg-gray-100",
                             ].join(" ")
                         }
                     >
                         Documents
                     </NavLink>
                 </nav>
+
+                {/* Right column intentionally empty to keep nav perfectly centered */}
+                <div className="justify-self-end" />
             </div>
         </header>
     );
