@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { listDocuments, deleteDocument } from "../api/documents";
 import StatusPill from "../components/StatusPill";
@@ -37,29 +38,24 @@ export default function DocumentsIndexPage() {
     const nav = useNavigate();
     const qc = useQueryClient();
 
-    // search / sort / pagination state (kept local per your current API)
     const [q, setQ] = useState("");
     const [page, setPage] = useState(1);
     const pageSize = 25;
-
-    // Figma shows "Created" — mapping to your existing uploadDate sort
     const [sort, setSort] = useState<"uploadDate,desc" | "uploadDate,asc">("uploadDate,desc");
 
     const params: ListParams = { page, pageSize, sort, q };
 
-    // Strongly-typed TanStack v5 query
     const { data, isLoading, isError, refetch } = useQuery<
-        Page<DocumentListItemDTO>,      // TData
-        Error,                         // TError
-        Page<DocumentListItemDTO>,     // TQueryFnData
-        readonly ["documents", ListParams] // TQueryKey
+        Page<DocumentListItemDTO>,
+        Error,
+        Page<DocumentListItemDTO>,
+        readonly ["documents", ListParams]
     >({
         queryKey: ["documents", params] as const,
         queryFn: ({ queryKey }) => {
-            const [, p] = queryKey; // p is typed as ListParams
+            const [, p] = queryKey;
             return listDocuments(p);
         },
-        // v5 replacement for keepPreviousData
         placeholderData: (prev) => prev,
         refetchOnWindowFocus: false,
     });
@@ -79,10 +75,9 @@ export default function DocumentsIndexPage() {
             {/* Page title */}
             <h1 className="text-heading text-3xl mb-6">All Documents</h1>
 
-            {/* Controls row: search + sort on the left, pagination on the right */}
+            {/* Controls row */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4">
                 <div className="flex items-center gap-3">
-                    {/* Search */}
                     <input
                         value={q}
                         onChange={(e) => setQ(e.target.value)}
@@ -100,7 +95,6 @@ export default function DocumentsIndexPage() {
                         style={{ width: '520px', maxWidth: '100%' }}
                     />
 
-                    {/* Sort dropdown — visually matches "Created" chip */}
                     <SortDropdown
                         value={sort}
                         onChange={(v) => {
@@ -111,7 +105,7 @@ export default function DocumentsIndexPage() {
                     />
                 </div>
 
-                {/* Pagination (Prev  Page X / Y  Next) */}
+                {/* Pagination */}
                 <div className="flex items-center gap-3 text-sm text-gray-600">
                     <button
                         onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -121,9 +115,7 @@ export default function DocumentsIndexPage() {
                     >
                         ‹ Prev
                     </button>
-                    <span>
-            Page {page} / {totalPages || 1}
-          </span>
+                    <span>Page {page} / {totalPages || 1}</span>
                     <button
                         onClick={() => setPage((p) => Math.min(totalPages || 1, p + 1))}
                         disabled={page >= (totalPages || 1)}
@@ -135,91 +127,89 @@ export default function DocumentsIndexPage() {
                 </div>
             </div>
 
-            {/* Table card */}
-            <div className="bg-white rounded-xl shadow-sm" style={{ border: '1px solid #e5e7eb', overflow: 'visible' }}>
-                <div className="overflow-x-auto" style={{ position: 'relative' }}>
-                    <table className="w-full table-fixed">
-                        <thead className="text-left text-sm font-semibold text-gray-900" style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e5e7eb' }}>
+            {/* Table card - NO OVERFLOW WRAPPER */}
+            <div className="bg-white rounded-xl shadow-sm" style={{ border: '1px solid #e5e7eb' }}>
+                <table className="w-full table-fixed">
+                    <thead className="text-left text-sm font-semibold text-gray-900" style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e5e7eb' }}>
+                    <tr>
+                        <Th style={{ width: '280px', borderBottom: '1px solid #e5e7eb' }}>Document ID</Th>
+                        <Th className="w-1/3" style={{ borderBottom: '1px solid #e5e7eb' }}>File name</Th>
+                        <Th className="w-28" style={{ borderBottom: '1px solid #e5e7eb' }}>File type</Th>
+                        <Th className="w-40" style={{ borderBottom: '1px solid #e5e7eb' }}>Document type</Th>
+                        <Th className="w-40" style={{ borderBottom: '1px solid #e5e7eb' }}>Created</Th>
+                        <Th className="w-28" style={{ borderBottom: '1px solid #e5e7eb' }}>Status</Th>
+                        <Th className="w-16" style={{ borderBottom: '1px solid #e5e7eb' }}></Th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {isLoading && (
                         <tr>
-                            <Th style={{ width: '280px', borderBottom: '1px solid #e5e7eb' }}>Document ID</Th>
-                            <Th className="w-1/3" style={{ borderBottom: '1px solid #e5e7eb' }}>File name</Th>
-                            <Th className="w-28" style={{ borderBottom: '1px solid #e5e7eb' }}>File type</Th>
-                            <Th className="w-40" style={{ borderBottom: '1px solid #e5e7eb' }}>Document type</Th>
-                            <Th className="w-40" style={{ borderBottom: '1px solid #e5e7eb' }}>Created</Th>
-                            <Th className="w-28" style={{ borderBottom: '1px solid #e5e7eb' }}>Status</Th>
-                            <Th className="w-16" style={{ borderBottom: '1px solid #e5e7eb' }}></Th>
+                            <Td colSpan={7} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                <div className="h-10 w-full animate-pulse rounded bg-gray-100" />
+                            </Td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        {isLoading && (
-                            <tr>
-                                <Td colSpan={7} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                    <div className="h-10 w-full animate-pulse rounded bg-gray-100" />
-                                </Td>
-                            </tr>
-                        )}
+                    )}
 
-                        {isError && !isLoading && (
-                            <tr>
-                                <Td colSpan={7} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                    <div className="text-red-600">
-                                        Failed to load.{" "}
-                                        <button className="underline" onClick={() => refetch()}>
-                                            Retry
-                                        </button>
-                                    </div>
-                                </Td>
-                            </tr>
-                        )}
+                    {isError && !isLoading && (
+                        <tr>
+                            <Td colSpan={7} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                <div className="text-red-600">
+                                    Failed to load.{" "}
+                                    <button className="underline" onClick={() => refetch()}>
+                                        Retry
+                                    </button>
+                                </div>
+                            </Td>
+                        </tr>
+                    )}
 
-                        {!isLoading && rows.length === 0 && !isError && (
-                            <tr>
-                                <Td colSpan={7} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                    <div className="text-gray-500">No documents found.</div>
-                                </Td>
-                            </tr>
-                        )}
+                    {!isLoading && rows.length === 0 && !isError && (
+                        <tr>
+                            <Td colSpan={7} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                <div className="text-gray-500">No documents found.</div>
+                            </Td>
+                        </tr>
+                    )}
 
-                        {rows.map((d: DocumentListItemDTO) => (
-                            <tr key={d.id} style={{ transition: 'background-color 0.15s', borderBottom: '1px solid #e5e7eb' }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                                <Td className="font-mono text-xs truncate text-gray-600" title={d.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                    <Link to={`/documents/${d.id}`} className="text-blue-600 hover:underline">
-                                        {d.id}
-                                    </Link>
-                                </Td>
-                                <Td className="truncate text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                    <Link
-                                        to={`/documents/${d.id}`}
-                                        className="hover:underline focus:outline-none focus:ring-2 rounded-md"
-                                        style={{ '--tw-ring-color': '#3b82f6' } as React.CSSProperties}
-                                    >
-                                        {d.fileName}
-                                    </Link>
-                                </Td>
-                                <Td className="text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>{extFromType(d.fileType)}</Td>
-                                <Td className="text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>{d.docType || "—"}</Td>
-                                <Td className="text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>{safeDateStr(d.uploadDate)}</Td>
-                                <Td style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                    <StatusPill status={toUiStatus(d.status)} />
-                                </Td>
-                                <Td className="relative" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                    <EllipsisMenu
-                                        onView={() => nav(`/documents/${d.id}`)}
-                                        onDelete={() => {
-                                            if (confirm("Delete this document and its derived data?")) {
-                                                remove.mutate(d.id);
-                                            }
-                                        }}
-                                        disabled={remove.isPending}
-                                    />
-                                </Td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                </div>
+                    {rows.map((d: DocumentListItemDTO) => (
+                        <tr key={d.id} style={{ transition: 'background-color 0.15s', borderBottom: '1px solid #e5e7eb' }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                            <Td className="font-mono text-xs truncate text-gray-600" title={d.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                <Link to={`/documents/${d.id}`} className="text-blue-600 hover:underline">
+                                    {d.id}
+                                </Link>
+                            </Td>
+                            <Td className="truncate text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                <Link
+                                    to={`/documents/${d.id}`}
+                                    className="hover:underline focus:outline-none focus:ring-2 rounded-md"
+                                    style={{ '--tw-ring-color': '#3b82f6' } as React.CSSProperties}
+                                >
+                                    {d.fileName}
+                                </Link>
+                            </Td>
+                            <Td className="text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>{extFromType(d.fileType)}</Td>
+                            <Td className="text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>{d.docType || "—"}</Td>
+                            <Td className="text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>{safeDateStr(d.uploadDate)}</Td>
+                            <Td style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                <StatusPill status={toUiStatus(d.status)} />
+                            </Td>
+                            <Td style={{ borderBottom: '1px solid #e5e7eb' }}>
+                                <EllipsisMenu
+                                    onView={() => nav(`/documents/${d.id}`)}
+                                    onDelete={() => {
+                                        if (confirm("Delete this document and its derived data?")) {
+                                            remove.mutate(d.id);
+                                        }
+                                    }}
+                                    disabled={remove.isPending}
+                                />
+                            </Td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
@@ -246,7 +236,7 @@ function EllipsisMenu({
 }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
-    const [menuPosition, setMenuPosition] = useState<'bottom' | 'top'>('bottom');
+    const [position, setPosition] = useState({ top: 0, left: 0 });
 
     useEffect(() => {
         const onDoc = (e: MouseEvent) => {
@@ -261,19 +251,17 @@ function EllipsisMenu({
         if (open && buttonRef.current) {
             const rect = buttonRef.current.getBoundingClientRect();
             const spaceBelow = window.innerHeight - rect.bottom;
-            const spaceAbove = rect.top;
 
-            // If not enough space below (less than 120px) and more space above, open upward
-            if (spaceBelow < 120 && spaceAbove > spaceBelow) {
-                setMenuPosition('top');
-            } else {
-                setMenuPosition('bottom');
-            }
+            // Position menu to the left of the button, vertically aligned
+            setPosition({
+                top: spaceBelow > 120 ? rect.bottom + 8 : rect.top - 120,
+                left: rect.right - 160 // 160px = menu width (40 * 4)
+            });
         }
     }, [open]);
 
     return (
-        <div className="ellipsis-menu relative inline-block">
+        <div className="ellipsis-menu inline-block">
             <button
                 ref={buttonRef}
                 aria-haspopup="menu"
@@ -294,12 +282,16 @@ function EllipsisMenu({
                 </svg>
             </button>
 
-            {open && (
+            {open && createPortal(
                 <div
                     role="menu"
-                    className={`absolute ${menuPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'} right-0 z-50 w-40 rounded-xl bg-white p-1`}
+                    className="w-40 rounded-xl bg-white p-1"
                     style={{
-                        boxShadow: 'var(--shadow-card)',
+                        position: 'fixed',
+                        top: `${position.top}px`,
+                        left: `${position.left}px`,
+                        zIndex: 9999,
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                         border: '1px solid #e5e7eb'
                     }}
                 >
@@ -319,7 +311,8 @@ function EllipsisMenu({
                         <TrashIcon className="w-4 h-4" />
                         <span>Delete</span>
                     </button>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
@@ -333,7 +326,6 @@ function SortDropdown({
     onChange: (v: "uploadDate,desc" | "uploadDate,asc") => void;
 }) {
     const [open, setOpen] = useState(false);
-
     const label = useMemo(() => "Created", [value]);
 
     useEffect(() => {
@@ -399,7 +391,6 @@ function DropdownItem({
     );
 }
 
-/* ---------- existing helper preserved ---------- */
 function extFromType(ct: string) {
     if (!ct) return "FILE";
     const s = ct.toLowerCase();
