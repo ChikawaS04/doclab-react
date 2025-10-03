@@ -21,12 +21,12 @@ function CollapsibleSection({ title, children }: { title: string; children: Reac
     const [isOpen, setIsOpen] = useState(true);
 
     return (
-        <div className="border-t pt-4 first:border-t-0 first:pt-0">
+        <div className="border-t pt-3 first:border-t-0 first:pt-0" style={{ borderColor: '#e5e7eb' }}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between w-full mb-3 text-left group"
+                className="flex items-center justify-between w-full mb-2 text-left group"
             >
-                <h3 className="text-base font-semibold text-gray-900">{title}</h3>
+                <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
                 <svg
                     width="16"
                     height="16"
@@ -146,13 +146,15 @@ export default function DocumentDetailPage() {
                         style={{ boxShadow: 'var(--shadow-card)' }}
                     >
                         <div className="flex items-center gap-2 mb-4">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
+                            <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ backgroundColor: '#f3f4f6' }}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </div>
                             <h2 className="text-xl font-semibold text-gray-900">Summary</h2>
                         </div>
                         {doc.summaries?.length ? (
@@ -180,28 +182,34 @@ export default function DocumentDetailPage() {
                         onMouseEnter={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)'}
                         onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card)'}
                     >
-                        <div className="border-b px-6 py-4">
+                        <div className="border-b px-5 py-3">
                             <div className="flex items-center gap-2">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
-                                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path>
-                                    <rect x="9" y="3" width="6" height="4" rx="1"></rect>
-                                    <path d="M9 12h6"></path>
-                                    <path d="M9 16h6"></path>
-                                </svg>
+                                <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ backgroundColor: '#f3f4f6' }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
+                                        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path>
+                                        <rect x="9" y="3" width="6" height="4" rx="1"></rect>
+                                        <path d="M9 12h6"></path>
+                                        <path d="M9 16h6"></path>
+                                    </svg>
+                                </div>
                                 <h2 className="text-lg font-semibold text-gray-900">Extracted Information</h2>
                             </div>
                         </div>
 
-                        <div className="p-6 space-y-4">
+                        <div className="p-5 space-y-3">
                             {Object.entries(GROUPS).map(([title, labels]) => {
                                 const items = allFields.filter((f) => labels.includes(f.name));
                                 if (!items.length) return null;
 
                                 return (
                                     <CollapsibleSection key={title} title={title}>
-                                        <div className="space-y-2">
+                                        <div className="space-y-1.5">
                                             {items.map((f, i) => (
-                                                <div key={`${f.name}-${i}`} className="flex items-start justify-between py-2 border-b last:border-b-0">
+                                                <div
+                                                    key={`${f.name}-${i}`}
+                                                    className="flex items-start justify-between py-2 px-3 rounded-lg"
+                                                    style={{ backgroundColor: '#f9fafb' }}
+                                                >
                                                     <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 w-2/5">
                                                         {humanize(f.name)}
                                                     </dt>
@@ -219,9 +227,13 @@ export default function DocumentDetailPage() {
                                 if (!others.length) return null;
                                 return (
                                     <CollapsibleSection title="Other">
-                                        <div className="space-y-2">
+                                        <div className="space-y-1.5">
                                             {others.map((f, i) => (
-                                                <div key={`${f.name}-${i}`} className="flex items-start justify-between py-2 border-b last:border-b-0">
+                                                <div
+                                                    key={`${f.name}-${i}`}
+                                                    className="flex items-start justify-between py-2 px-3 rounded-lg"
+                                                    style={{ backgroundColor: '#f9fafb' }}
+                                                >
                                                     <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 w-2/5">
                                                         {humanize(f.name)}
                                                     </dt>
@@ -245,10 +257,12 @@ export default function DocumentDetailPage() {
                         onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card)'}
                     >
                         <div className="flex items-center gap-2 mb-4">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
+                            <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ backgroundColor: '#f3f4f6' }}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </div>
                             <h2 className="text-xl font-semibold text-gray-900">File Preview</h2>
                         </div>
                         {canTryPreview ? (
