@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { listDocuments, deleteDocument } from "../api/documents";
 import StatusPill from "../components/StatusPill";
@@ -136,8 +136,8 @@ export default function DocumentsIndexPage() {
             </div>
 
             {/* Table card */}
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
-                <div className="overflow-x-auto">
+            <div className="bg-white rounded-xl shadow-sm" style={{ border: '1px solid #e5e7eb', overflow: 'visible' }}>
+                <div className="overflow-x-auto" style={{ position: 'relative' }}>
                     <table className="w-full table-fixed">
                         <thead className="text-left text-sm font-semibold text-gray-900" style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e5e7eb' }}>
                         <tr>
@@ -245,6 +245,8 @@ function EllipsisMenu({
     disabled?: boolean;
 }) {
     const [open, setOpen] = useState(false);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const [menuPosition, setMenuPosition] = useState<'bottom' | 'top'>('bottom');
 
     useEffect(() => {
         const onDoc = (e: MouseEvent) => {
@@ -255,9 +257,25 @@ function EllipsisMenu({
         return () => document.removeEventListener("click", onDoc);
     }, []);
 
+    useEffect(() => {
+        if (open && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+
+            // If not enough space below (less than 120px) and more space above, open upward
+            if (spaceBelow < 120 && spaceAbove > spaceBelow) {
+                setMenuPosition('top');
+            } else {
+                setMenuPosition('bottom');
+            }
+        }
+    }, [open]);
+
     return (
         <div className="ellipsis-menu relative inline-block">
             <button
+                ref={buttonRef}
                 aria-haspopup="menu"
                 aria-expanded={open}
                 disabled={disabled}
@@ -265,7 +283,7 @@ function EllipsisMenu({
                     e.stopPropagation();
                     setOpen((v) => !v);
                 }}
-                className="h-9 w-9 inline-flex items-center justify-center rounded-full hover:bg-gray-100 disabled:opacity-50"
+                className="h-9 w-9 inline-flex items-center justify-center rounded-full hover:bg-gray-100 disabled:opacity-50 transition-colors"
                 title="Actions"
             >
                 <span className="sr-only">Actions</span>
@@ -279,12 +297,16 @@ function EllipsisMenu({
             {open && (
                 <div
                     role="menu"
-                    className="absolute right-0 z-20 mt-2 w-40 rounded-xl bg-white border shadow-lg p-1"
+                    className={`absolute ${menuPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'} right-0 z-50 w-40 rounded-xl bg-white p-1`}
+                    style={{
+                        boxShadow: 'var(--shadow-card)',
+                        border: '1px solid #e5e7eb'
+                    }}
                 >
                     <button
                         role="menuitem"
                         onClick={(e) => { e.stopPropagation(); setOpen(false); onView(); }}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 hover:bg-gray-100 text-gray-800"
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-gray-100 text-gray-700 transition-colors"
                     >
                         <EyeIcon className="w-4 h-4" />
                         <span>View</span>
@@ -292,7 +314,7 @@ function EllipsisMenu({
                     <button
                         role="menuitem"
                         onClick={(e) => { e.stopPropagation(); setOpen(false); onDelete(); }}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-50 text-red-600 mt-1"
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-red-50 text-red-600 mt-1 transition-colors"
                     >
                         <TrashIcon className="w-4 h-4" />
                         <span>Delete</span>
