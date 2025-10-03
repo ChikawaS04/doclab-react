@@ -14,94 +14,94 @@ export default function TopNav() {
     return (
         <header
             className={[
-                "sticky top-0 z-50 border-b transition-all duration-200",
-                scrolled ? "shadow-md" : "shadow-none",
+                "sticky top-0 z-50 border-b bg-white",
+                scrolled ? "shadow-sm" : "shadow-none",
             ].join(" ")}
             style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
             }}
         >
-            <div className="mx-auto w-full px-6 lg:px-8" style={{ maxWidth: '1200px' }}>
-                <div className="flex items-center justify-between h-16">
-                    {/* Brand */}
+            <div className="mx-auto w-full px-4 sm:px-6 lg:px-8" style={{ maxWidth: '80rem' }}>
+                <div className="flex justify-between items-center h-16">
+                    {/* Brand (left) */}
                     <Link
                         to="/"
                         className="flex items-center gap-3 group"
                         style={{ textDecoration: 'none' }}
                     >
                         <div
-                            className="relative flex items-center justify-center w-11 h-11 rounded-xl shadow-md transition-transform duration-200 group-hover:scale-105"
-                            style={{
-                                background: 'linear-gradient(135deg, var(--doclab-blue-600) 0%, var(--doclab-blue-700) 100%)',
-                            }}
+                            className="flex items-center justify-center w-10 h-10 rounded-xl text-white shadow-sm"
+                            style={{ backgroundColor: 'var(--doclab-blue-600)' }}
                         >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M7 3h7l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M14 3v5h5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M9 13h6M9 17h4" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                            {/* simple doc icon */}
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M7 3h7l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="white" strokeWidth="1.6"/>
+                                <path d="M14 3v5h5" stroke="white" strokeWidth="1.6"/>
                             </svg>
                         </div>
                         <div className="leading-tight">
-                            <h1 className="text-xl font-bold tracking-tight text-gray-900 transition-colors group-hover:text-blue-600">
-                                DocLab
-                            </h1>
-                            <p className="text-xs font-medium text-gray-500 -mt-0.5">
-                                Document Intelligence
-                            </p>
+                            <div className="text-xl font-semibold tracking-tight text-gray-900">DocLab</div>
+                            <div className="text-xs text-gray-500 -mt-0.5">Document Intelligence</div>
                         </div>
                     </Link>
 
-                    {/* Navigation */}
-                    <nav className="flex items-center gap-1">
+                    {/* Centered nav */}
+                    <nav className="hidden md:flex items-center gap-2">
                         <NavLink
                             to="/"
                             end
-                            className={({ isActive }) =>
-                                [
-                                    "relative px-5 py-2 text-sm font-semibold transition-all duration-200 rounded-lg",
-                                    isActive
-                                        ? "text-white"
-                                        : "text-gray-700 hover:text-gray-900 hover:bg-gray-50",
-                                ].join(" ")
-                            }
-                            style={({ isActive }) =>
-                                isActive ? {
-                                    background: 'linear-gradient(135deg, var(--doclab-blue-600) 0%, var(--doclab-blue-700) 100%)',
-                                    boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.25)',
-                                    textDecoration: 'none',
-                                } : {
-                                    textDecoration: 'none',
+                            className="rounded-xl px-4 py-2 text-sm font-medium transition-colors"
+                            style={({ isActive }) => ({
+                                backgroundColor: isActive ? '#dbeafe' : 'transparent',
+                                color: isActive ? '#1e40af' : '#374151',
+                                textDecoration: 'none',
+                            })}
+                            onMouseEnter={(e) => {
+                                const isActive = e.currentTarget.getAttribute('aria-current') === 'page';
+                                if (!isActive) {
+                                    e.currentTarget.style.backgroundColor = '#bfdbfe';
                                 }
-                            }
+                            }}
+                            onMouseLeave={(e) => {
+                                const isActive = e.currentTarget.getAttribute('aria-current') === 'page';
+                                e.currentTarget.style.backgroundColor = isActive ? '#dbeafe' : 'transparent';
+                            }}
                         >
-                            <span className="relative z-10">Upload</span>
+                            Upload
                         </NavLink>
 
                         <NavLink
                             to="/documents"
-                            className={({ isActive }) =>
-                                [
-                                    "relative px-5 py-2 text-sm font-semibold transition-all duration-200 rounded-lg",
-                                    isActive
-                                        ? "text-white"
-                                        : "text-gray-700 hover:text-gray-900 hover:bg-gray-50",
-                                ].join(" ")
-                            }
-                            style={({ isActive }) =>
-                                isActive ? {
-                                    background: 'linear-gradient(135deg, var(--doclab-blue-600) 0%, var(--doclab-blue-700) 100%)',
-                                    boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.25)',
-                                    textDecoration: 'none',
-                                } : {
-                                    textDecoration: 'none',
+                            className="rounded-xl px-4 py-2 text-sm font-medium transition-colors"
+                            style={({ isActive }) => ({
+                                backgroundColor: isActive ? '#dbeafe' : 'transparent',
+                                color: isActive ? '#1e40af' : '#374151',
+                                textDecoration: 'none',
+                            })}
+                            onMouseEnter={(e) => {
+                                const isActive = e.currentTarget.getAttribute('aria-current') === 'page';
+                                if (!isActive) {
+                                    e.currentTarget.style.backgroundColor = '#bfdbfe';
                                 }
-                            }
+                            }}
+                            onMouseLeave={(e) => {
+                                const isActive = e.currentTarget.getAttribute('aria-current') === 'page';
+                                e.currentTarget.style.backgroundColor = isActive ? '#dbeafe' : 'transparent';
+                            }}
                         >
-                            <span className="relative z-10">Documents</span>
+                            Documents
                         </NavLink>
                     </nav>
+
+                    {/* User section (right) */}
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white text-sm font-semibold">
+                            JD
+                        </div>
+                        <span className="hidden sm:inline text-sm text-gray-700 font-medium">John Doe</span>
+                    </div>
                 </div>
             </div>
         </header>
