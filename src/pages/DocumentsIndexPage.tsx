@@ -75,9 +75,9 @@ export default function DocumentsIndexPage() {
     });
 
     return (
-        <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10 py-8">
-            {/* Page title (≈28px, 600) */}
-            <h1 className="text-heading text-[28px] mb-6">All Documents</h1>
+        <div className="mx-auto w-full max-w-screen-xl px-6 md:px-8 py-8">
+            {/* Page title */}
+            <h1 className="text-heading text-3xl mb-6">All Documents</h1>
 
             {/* Controls row: search + sort on the left, pagination on the right */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4">
@@ -96,11 +96,11 @@ export default function DocumentsIndexPage() {
                             }
                         }}
                         placeholder="Search by ID, file name, or doc type..."
-                        className="input-enhanced w-[520px] max-w-full rounded-xl px-4 py-3 text-sm focus:outline-none"
+                        className="input-enhanced rounded-xl px-4 py-3 text-sm focus:outline-none"
+                        style={{ width: '520px', maxWidth: '100%' }}
                     />
 
-
-                    {/* Sort dropdown — visually matches “Created” chip */}
+                    {/* Sort dropdown — visually matches "Created" chip */}
                     <SortDropdown
                         value={sort}
                         onChange={(v) => {
@@ -112,7 +112,7 @@ export default function DocumentsIndexPage() {
                 </div>
 
                 {/* Pagination (Prev  Page X / Y  Next) */}
-                <div className="flex items-center gap-3 text-[14px] text-[#475569]">
+                <div className="flex items-center gap-3 text-sm text-gray-600">
                     <button
                         onClick={() => setPage((p) => Math.max(1, p - 1))}
                         disabled={page <= 1}
@@ -136,86 +136,89 @@ export default function DocumentsIndexPage() {
             </div>
 
             {/* Table card */}
-            <div className="bg-white border rounded-[12px] shadow-sm overflow-hidden">
+            <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
-                <table className="w-full table-fixed">
-                    <thead className="bg-[#f8fafc] text-left text-[14px] text-[#475569]">
-                    <tr>
-                        <Th className="w-[280px]">Document ID</Th>
-                        <Th className="w-1/3">File name</Th>
-                        <Th className="w-28">File type</Th>
-                        <Th className="w-40">Document type</Th>
-                        <Th className="w-40">Created</Th>
-                        <Th className="w-28">Status</Th>
-                        <Th className="w-16"></Th>
-                    </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                    {isLoading && (
+                    <table className="w-full table-fixed">
+                        <thead className="text-left text-sm text-gray-600" style={{ backgroundColor: '#f8fafc' }}>
                         <tr>
-                            <Td colSpan={7}>
-                                <div className="h-10 w-full animate-pulse rounded bg-[#f1f5f9]" />
-                            </Td>
+                            <Th style={{ width: '280px' }}>Document ID</Th>
+                            <Th className="w-1/3">File name</Th>
+                            <Th className="w-28">File type</Th>
+                            <Th className="w-40">Document type</Th>
+                            <Th className="w-40">Created</Th>
+                            <Th className="w-28">Status</Th>
+                            <Th className="w-16"></Th>
                         </tr>
-                    )}
+                        </thead>
+                        <tbody className="divide-y">
+                        {isLoading && (
+                            <tr>
+                                <Td colSpan={7}>
+                                    <div className="h-10 w-full animate-pulse rounded bg-gray-100" />
+                                </Td>
+                            </tr>
+                        )}
 
-                    {isError && !isLoading && (
-                        <tr>
-                            <Td colSpan={7}>
-                                <div className="text-[#dc2626]">
-                                    Failed to load.{" "}
-                                    <button className="underline" onClick={() => refetch()}>
-                                        Retry
-                                    </button>
-                                </div>
-                            </Td>
-                        </tr>
-                    )}
+                        {isError && !isLoading && (
+                            <tr>
+                                <Td colSpan={7}>
+                                    <div className="text-red-600">
+                                        Failed to load.{" "}
+                                        <button className="underline" onClick={() => refetch()}>
+                                            Retry
+                                        </button>
+                                    </div>
+                                </Td>
+                            </tr>
+                        )}
 
-                    {!isLoading && rows.length === 0 && !isError && (
-                        <tr>
-                            <Td colSpan={7}>
-                                <div className="text-[#64748b]">No documents found.</div>
-                            </Td>
-                        </tr>
-                    )}
+                        {!isLoading && rows.length === 0 && !isError && (
+                            <tr>
+                                <Td colSpan={7}>
+                                    <div className="text-gray-500">No documents found.</div>
+                                </Td>
+                            </tr>
+                        )}
 
-                    {rows.map((d: DocumentListItemDTO) => (
-                        <tr key={d.id} className="hover:bg-[#f8fafc]">
-                            <Td className="font-mono text-xs truncate" title={d.id}>
-                                <Link to={`/documents/${d.id}`} className="text-[#2563eb] hover:underline">
-                                    {d.id}
-                                </Link>
-                            </Td>
-                            <Td className="truncate">
-                                <Link
-                                    to={`/documents/${d.id}`}
-                                    className="hover:underline focus:outline-none focus:ring-2 focus:ring-[#3b82f6] rounded-md"
-                                >
-                                    {d.fileName}
-                                </Link>
-                            </Td>
-                            <Td>{extFromType(d.fileType)}</Td>
-                            <Td>{d.docType || "—"}</Td>
-                            <Td>{safeDateStr(d.uploadDate)}</Td>
-                            <Td>
-                                <StatusPill status={toUiStatus(d.status)} />
-                            </Td>
-                            <Td className="relative">
-                                <EllipsisMenu
-                                    onView={() => nav(`/documents/${d.id}`)}
-                                    onDelete={() => {
-                                        if (confirm("Delete this document and its derived data?")) {
-                                            remove.mutate(d.id);
-                                        }
-                                    }}
-                                    disabled={remove.isPending}
-                                />
-                            </Td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
+                        {rows.map((d: DocumentListItemDTO) => (
+                            <tr key={d.id} style={{ transition: 'background-color 0.15s' }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                                <Td className="font-mono text-xs truncate" title={d.id}>
+                                    <Link to={`/documents/${d.id}`} className="text-blue-600 hover:underline">
+                                        {d.id}
+                                    </Link>
+                                </Td>
+                                <Td className="truncate">
+                                    <Link
+                                        to={`/documents/${d.id}`}
+                                        className="hover:underline focus:outline-none focus:ring-2 rounded-md"
+                                        style={{ '--tw-ring-color': '#3b82f6' } as React.CSSProperties}
+                                    >
+                                        {d.fileName}
+                                    </Link>
+                                </Td>
+                                <Td>{extFromType(d.fileType)}</Td>
+                                <Td>{d.docType || "—"}</Td>
+                                <Td>{safeDateStr(d.uploadDate)}</Td>
+                                <Td>
+                                    <StatusPill status={toUiStatus(d.status)} />
+                                </Td>
+                                <Td className="relative">
+                                    <EllipsisMenu
+                                        onView={() => nav(`/documents/${d.id}`)}
+                                        onDelete={() => {
+                                            if (confirm("Delete this document and its derived data?")) {
+                                                remove.mutate(d.id);
+                                            }
+                                        }}
+                                        disabled={remove.isPending}
+                                    />
+                                </Td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -262,7 +265,7 @@ function EllipsisMenu({
                     e.stopPropagation();
                     setOpen((v) => !v);
                 }}
-                className="h-9 w-9 inline-flex items-center justify-center rounded-full hover:bg-[#f1f5f9] disabled:opacity-50"
+                className="h-9 w-9 inline-flex items-center justify-center rounded-full hover:bg-gray-100 disabled:opacity-50"
                 title="Actions"
             >
                 <span className="sr-only">Actions</span>
@@ -327,7 +330,7 @@ function SortDropdown({
                     e.stopPropagation();
                     setOpen((v) => !v);
                 }}
-                className="input-enhanced inline-flex items-center gap-2 rounded-[12px] px-4 py-3"
+                className="input-enhanced inline-flex items-center gap-2 rounded-xl px-4 py-3"
                 aria-haspopup="listbox"
                 aria-expanded={open}
             >
@@ -338,7 +341,7 @@ function SortDropdown({
             </button>
 
             {open && (
-                <div className="absolute z-20 mt-2 w-44 rounded-[12px] bg-white shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),0_4px_6px_-4px_rgba(0,0,0,0.1)] border p-2">
+                <div className="absolute z-20 mt-2 w-44 rounded-xl bg-white border p-2" style={{ boxShadow: 'var(--shadow-lg)' }}>
                     <DropdownItem active={value === "uploadDate,desc"} onClick={() => onChange("uploadDate,desc")}>
                         Newest first
                     </DropdownItem>
@@ -362,9 +365,10 @@ function DropdownItem({
                 e.stopPropagation();
                 onClick();
             }}
-            className={`w-full text-left rounded-[10px] px-3 py-2 hover:bg-[#f1f5f9] ${
-                active ? "bg-[#eff6ff] text-[#1e40af]" : "text-[#0f172a]"
+            className={`w-full text-left rounded-lg px-3 py-2 hover:bg-gray-100 ${
+                active ? "text-blue-800" : "text-gray-900"
             }`}
+            style={active ? { backgroundColor: 'var(--doclab-blue-50)' } : {}}
             role="option"
             aria-selected={!!active}
         >
