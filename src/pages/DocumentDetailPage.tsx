@@ -61,7 +61,7 @@ export default function DocumentDetailPage() {
                 <div>
                     <h1 className="text-3xl font-semibold">{doc.fileName}</h1>
                     <div className="mt-2 flex items-center gap-3 text-sm text-gray-600">
-                        <span>📅 {safeDateStr(doc.uploadDate)}</span>
+                        <span>{safeDateStr(doc.uploadDate)}</span>
                         <StatusPill status={toUiStatus(doc.status)} />
                     </div>
                 </div>
@@ -70,9 +70,9 @@ export default function DocumentDetailPage() {
                     {href && (
                         <a
                             href={href}
-                            className="rounded-full bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
+                            className="btn-primary rounded-full px-4 py-2"
                         >
-                            ⬇ Download
+                            Download
                         </a>
                     )}
                     <button
@@ -81,7 +81,7 @@ export default function DocumentDetailPage() {
                             if (!window.confirm("Delete this document? This cannot be undone.")) return;
                             remove.mutate();
                         }}
-                        className={`rounded-full px-4 py-2 text-white ${
+                        className={`rounded-full px-4 py-2 text-white transition ${
                             remove.isPending ? "bg-gray-400" : "bg-red-600 hover:bg-red-700"
                         }`}
                     >
@@ -159,9 +159,14 @@ export default function DocumentDetailPage() {
                     <div className="rounded-2xl bg-white p-6 shadow-sm lg:sticky lg:top-6">
                         <h2 className="mb-3 text-xl font-semibold">File Preview</h2>
                         {canTryPreview ? (
-                            <embed src={href} type="application/pdf" className="h-[60vh] w-full rounded-xl border" />
+                            <embed
+                                src={href}
+                                type="application/pdf"
+                                className="w-full rounded-xl border"
+                                style={{ height: '60vh' }}
+                            />
                         ) : (
-                            <div className="grid h-64 place-items-center rounded-xl border border-dashed text-sm text-gray-600">
+                            <div className="grid place-items-center rounded-xl border border-dashed text-sm text-gray-600" style={{ height: '16rem' }}>
                                 Preview Not Available
                             </div>
                         )}
