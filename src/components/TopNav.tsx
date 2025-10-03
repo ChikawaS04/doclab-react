@@ -12,20 +12,28 @@ export default function TopNav() {
     }, []);
 
     const linkBase =
-        "rounded-xl px-3.5 py-2 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]";
+        "rounded-xl px-4 py-2 text-sm transition-colors focus:outline-none focus-visible:ring-2";
 
     return (
         <header
             className={[
-                "sticky top-0 z-40 border-b bg-white/80 backdrop-blur",
+                "sticky top-0 z-40 border-b bg-white",
                 scrolled ? "shadow-sm" : "shadow-none",
             ].join(" ")}
+            style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+            }}
         >
             {/* 3-column grid centers the nav regardless of brand width */}
             <div className="app-container py-3 grid grid-cols-[1fr_auto_1fr] items-center">
                 {/* Brand (left) */}
                 <Link to="/" className="flex items-center gap-3 justify-self-start group">
-                    <div className="grid h-9 w-9 place-items-center rounded-2xl bg-[var(--doclab-blue-600)] text-white shadow-sm">
+                    <div
+                        className="grid h-9 w-9 place-items-center rounded-2xl text-white shadow-sm"
+                        style={{ backgroundColor: 'var(--doclab-blue-600)' }}
+                    >
                         {/* simple doc icon */}
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M7 3h7l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="white" strokeWidth="1.6"/>
@@ -47,9 +55,12 @@ export default function TopNav() {
                             [
                                 linkBase,
                                 isActive
-                                    ? "bg-[var(--doclab-blue-50)] text-[var(--doclab-blue-700)]"
+                                    ? "text-blue-700"
                                     : "text-gray-700 hover:bg-gray-100",
                             ].join(" ")
+                        }
+                        style={({ isActive }) =>
+                            isActive ? { backgroundColor: 'var(--doclab-blue-50)' } : {}
                         }
                     >
                         Upload
@@ -61,9 +72,12 @@ export default function TopNav() {
                             [
                                 linkBase,
                                 isActive
-                                    ? "bg-[var(--doclab-blue-50)] text-[var(--doclab-blue-700)]"
+                                    ? "text-blue-700"
                                     : "text-gray-700 hover:bg-gray-100",
                             ].join(" ")
+                        }
+                        style={({ isActive }) =>
+                            isActive ? { backgroundColor: 'var(--doclab-blue-50)' } : {}
                         }
                     >
                         Documents

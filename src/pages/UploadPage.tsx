@@ -41,7 +41,7 @@ export default function UploadPage() {
     }
 
     return (
-        <section className="app-container space-y-10 py-8">
+        <section className="app-container space-y-8 py-8">
             {/* hidden file input to avoid native button styling */}
             <input
                 ref={fileInputRef}
@@ -55,18 +55,22 @@ export default function UploadPage() {
             <div
                 className={[
                     "card p-12 text-center dropzone-outline",
-                    dragOver ? "bg-[var(--doclab-blue-50)]" : "bg-white",
+                    dragOver ? "" : "bg-white",
                 ].join(" ")}
+                style={dragOver ? { backgroundColor: 'var(--doclab-blue-50)' } : {}}
                 onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={(e) => { e.preventDefault(); setDragOver(false); onFiles(e.dataTransfer.files); }}
             >
                 {/* icon */}
-                <div className="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-2xl bg-[var(--doclab-slate-100)] text-gray-700 shadow-sm">
+                <div
+                    className="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-2xl text-gray-700 shadow-sm"
+                    style={{ backgroundColor: 'var(--doclab-slate-100)' }}
+                >
                     <UploadIcon />
                 </div>
 
-                <h1 className="text-heading mb-2 text-[28px]">Upload Document</h1>
+                <h1 className="text-heading mb-2 text-3xl">Upload Document</h1>
                 <p className="text-base text-gray-600">
                     Drag and drop your file here, or click to browse
                 </p>
@@ -87,8 +91,11 @@ export default function UploadPage() {
                 {progress !== null && (
                     <div className="mx-auto mt-4 h-2 w-80 overflow-hidden rounded-full bg-gray-200">
                         <div
-                            className="h-full bg-[var(--doclab-blue-600)] transition-all"
-                            style={{ width: `${progress}%` }}
+                            className="h-full transition-all"
+                            style={{
+                                width: `${progress}%`,
+                                backgroundColor: 'var(--doclab-blue-600)'
+                            }}
                         />
                     </div>
                 )}
@@ -99,7 +106,7 @@ export default function UploadPage() {
                 )}
 
                 {/* file-type legend */}
-                <div className="mt-6 flex items-center justify-center gap-7 text-sm">
+                <div className="mt-6 flex items-center justify-center gap-6 text-sm">
                     <LegendDot label="PDF"  dotClass="bg-emerald-500" />
                     <LegendDot label="DOCX" dotClass="bg-blue-500" />
                     <LegendDot label="TXT"  dotClass="bg-purple-500" />
@@ -108,7 +115,7 @@ export default function UploadPage() {
 
             {/* Recent uploads */}
             <div className="space-y-2">
-                <h2 className="text-heading text-[22px]">Recent Uploads</h2>
+                <h2 className="text-heading text-2xl">Recent Uploads</h2>
                 <p className="text-sm text-gray-600">Your latest documents</p>
 
                 <div className="card mt-2 overflow-hidden">
@@ -136,7 +143,7 @@ export default function UploadPage() {
                                             <div className="min-w-0">
                                                 <Link
                                                     to={`/documents/${d.id}`}
-                                                    className="block truncate text-[15px] text-gray-900 hover:underline"
+                                                    className="block truncate text-base text-gray-900 hover:underline"
                                                     title={d.fileName}
                                                 >
                                                     {d.fileName}
