@@ -95,13 +95,8 @@ export default function TopNav() {
                         </NavLink>
                     </nav>
 
-                    {/* User section (right) */}
-                    <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white text-sm font-semibold">
-                            JD
-                        </div>
-                        <span className="hidden sm:inline text-sm text-gray-700 font-medium">John Doe</span>
-                    </div>
+                    {/* Right column intentionally empty to keep nav centered */}
+                    <div className="justify-self-end" />
                 </div>
             </div>
         </header>
