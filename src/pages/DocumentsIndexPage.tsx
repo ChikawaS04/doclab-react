@@ -132,13 +132,13 @@ export default function DocumentsIndexPage() {
                 <table className="w-full table-fixed">
                     <thead className="text-left text-sm font-semibold text-gray-900" style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e5e7eb' }}>
                     <tr>
-                        <Th style={{ width: '280px', borderBottom: '1px solid #e5e7eb' }}>Document ID</Th>
-                        <Th className="w-1/3" style={{ borderBottom: '1px solid #e5e7eb' }}>File name</Th>
-                        <Th className="w-28" style={{ borderBottom: '1px solid #e5e7eb' }}>File type</Th>
-                        <Th className="w-40" style={{ borderBottom: '1px solid #e5e7eb' }}>Document type</Th>
-                        <Th className="w-40" style={{ borderBottom: '1px solid #e5e7eb' }}>Created</Th>
-                        <Th className="w-28" style={{ borderBottom: '1px solid #e5e7eb' }}>Status</Th>
-                        <Th className="w-16" style={{ borderBottom: '1px solid #e5e7eb' }}></Th>
+                        <Th style={{ width: '260px', borderBottom: '1px solid #e5e7eb' }}>Document ID</Th>
+                        <Th style={{ width: '22%', borderBottom: '1px solid #e5e7eb' }}>File name</Th>
+                        <Th style={{ width: '90px', borderBottom: '1px solid #e5e7eb' }}>File type</Th>
+                        <Th style={{ width: '140px', borderBottom: '1px solid #e5e7eb' }}>Document type</Th>
+                        <Th style={{ width: '200px', borderBottom: '1px solid #e5e7eb' }}>Created</Th>
+                        <Th style={{ width: '100px', borderBottom: '1px solid #e5e7eb' }}>Status</Th>
+                        <Th style={{ width: '60px', borderBottom: '1px solid #e5e7eb' }}></Th>
                     </tr>
                     </thead>
                     <tbody>
