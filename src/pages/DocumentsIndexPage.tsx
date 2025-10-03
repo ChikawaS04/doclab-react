@@ -136,24 +136,24 @@ export default function DocumentsIndexPage() {
             </div>
 
             {/* Table card */}
-            <div className="bg-white border rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
                 <div className="overflow-x-auto">
                     <table className="w-full table-fixed">
-                        <thead className="text-left text-sm text-gray-600" style={{ backgroundColor: '#f8fafc' }}>
+                        <thead className="text-left text-sm font-semibold text-gray-900" style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e5e7eb' }}>
                         <tr>
-                            <Th style={{ width: '280px' }}>Document ID</Th>
-                            <Th className="w-1/3">File name</Th>
-                            <Th className="w-28">File type</Th>
-                            <Th className="w-40">Document type</Th>
-                            <Th className="w-40">Created</Th>
-                            <Th className="w-28">Status</Th>
-                            <Th className="w-16"></Th>
+                            <Th style={{ width: '280px', borderBottom: '1px solid #e5e7eb' }}>Document ID</Th>
+                            <Th className="w-1/3" style={{ borderBottom: '1px solid #e5e7eb' }}>File name</Th>
+                            <Th className="w-28" style={{ borderBottom: '1px solid #e5e7eb' }}>File type</Th>
+                            <Th className="w-40" style={{ borderBottom: '1px solid #e5e7eb' }}>Document type</Th>
+                            <Th className="w-40" style={{ borderBottom: '1px solid #e5e7eb' }}>Created</Th>
+                            <Th className="w-28" style={{ borderBottom: '1px solid #e5e7eb' }}>Status</Th>
+                            <Th className="w-16" style={{ borderBottom: '1px solid #e5e7eb' }}></Th>
                         </tr>
                         </thead>
-                        <tbody className="divide-y">
+                        <tbody>
                         {isLoading && (
                             <tr>
-                                <Td colSpan={7}>
+                                <Td colSpan={7} style={{ borderBottom: '1px solid #e5e7eb' }}>
                                     <div className="h-10 w-full animate-pulse rounded bg-gray-100" />
                                 </Td>
                             </tr>
@@ -161,7 +161,7 @@ export default function DocumentsIndexPage() {
 
                         {isError && !isLoading && (
                             <tr>
-                                <Td colSpan={7}>
+                                <Td colSpan={7} style={{ borderBottom: '1px solid #e5e7eb' }}>
                                     <div className="text-red-600">
                                         Failed to load.{" "}
                                         <button className="underline" onClick={() => refetch()}>
@@ -174,22 +174,22 @@ export default function DocumentsIndexPage() {
 
                         {!isLoading && rows.length === 0 && !isError && (
                             <tr>
-                                <Td colSpan={7}>
+                                <Td colSpan={7} style={{ borderBottom: '1px solid #e5e7eb' }}>
                                     <div className="text-gray-500">No documents found.</div>
                                 </Td>
                             </tr>
                         )}
 
                         {rows.map((d: DocumentListItemDTO) => (
-                            <tr key={d.id} style={{ transition: 'background-color 0.15s' }}
+                            <tr key={d.id} style={{ transition: 'background-color 0.15s', borderBottom: '1px solid #e5e7eb' }}
                                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
                                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                                <Td className="font-mono text-xs truncate" title={d.id}>
+                                <Td className="font-mono text-xs truncate text-gray-600" title={d.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
                                     <Link to={`/documents/${d.id}`} className="text-blue-600 hover:underline">
                                         {d.id}
                                     </Link>
                                 </Td>
-                                <Td className="truncate">
+                                <Td className="truncate text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>
                                     <Link
                                         to={`/documents/${d.id}`}
                                         className="hover:underline focus:outline-none focus:ring-2 rounded-md"
@@ -198,13 +198,13 @@ export default function DocumentsIndexPage() {
                                         {d.fileName}
                                     </Link>
                                 </Td>
-                                <Td>{extFromType(d.fileType)}</Td>
-                                <Td>{d.docType || "—"}</Td>
-                                <Td>{safeDateStr(d.uploadDate)}</Td>
-                                <Td>
+                                <Td className="text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>{extFromType(d.fileType)}</Td>
+                                <Td className="text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>{d.docType || "—"}</Td>
+                                <Td className="text-sm text-gray-600" style={{ borderBottom: '1px solid #e5e7eb' }}>{safeDateStr(d.uploadDate)}</Td>
+                                <Td style={{ borderBottom: '1px solid #e5e7eb' }}>
                                     <StatusPill status={toUiStatus(d.status)} />
                                 </Td>
-                                <Td className="relative">
+                                <Td className="relative" style={{ borderBottom: '1px solid #e5e7eb' }}>
                                     <EllipsisMenu
                                         onView={() => nav(`/documents/${d.id}`)}
                                         onDelete={() => {
@@ -228,11 +228,11 @@ export default function DocumentsIndexPage() {
 /* ---------- small presentational pieces ---------- */
 function Th(props: React.HTMLAttributes<HTMLTableCellElement>) {
     const { className = "", ...rest } = props;
-    return <th className={`text-left font-medium border-b px-4 py-3 ${className}`} {...rest} />;
+    return <th className={`text-left font-semibold px-4 py-3 ${className}`} {...rest} />;
 }
 function Td(props: React.HTMLAttributes<HTMLTableCellElement> & { colSpan?: number }) {
     const { className = "", ...rest } = props;
-    return <td className={`border-b px-4 py-4 align-middle ${className}`} {...rest} />;
+    return <td className={`px-4 py-3 align-middle ${className}`} {...rest} />;
 }
 
 function EllipsisMenu({
