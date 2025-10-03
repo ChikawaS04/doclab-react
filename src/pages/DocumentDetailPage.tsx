@@ -197,24 +197,43 @@ export default function DocumentDetailPage() {
 
                 {/* Sticky preview */}
                 <div className="lg:col-span-1">
-                    <div className="rounded-2xl bg-white p-6 shadow-sm lg:sticky lg:top-6">
-                        <h2 className="mb-3 text-xl font-semibold">File Preview</h2>
+                    <div
+                        className="rounded-2xl bg-white p-6 lg:sticky lg:top-6 transition-shadow"
+                        style={{ boxShadow: 'var(--shadow-card)' }}
+                        onMouseEnter={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)'}
+                        onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card)'}
+                    >
+                        <div className="flex items-center gap-2 mb-4">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <h2 className="text-xl font-semibold text-gray-900">File Preview</h2>
+                        </div>
                         {canTryPreview ? (
                             <embed
                                 src={href}
                                 type="application/pdf"
-                                className="w-full rounded-xl border"
+                                className="w-full rounded-xl border mb-4"
                                 style={{ height: '60vh' }}
                             />
                         ) : (
-                            <div className="grid place-items-center rounded-xl border border-dashed text-sm text-gray-600" style={{ height: '16rem' }}>
+                            <div className="grid place-items-center rounded-xl border border-dashed text-sm text-gray-600 mb-4" style={{ height: '16rem' }}>
                                 Preview Not Available
                             </div>
                         )}
                         {href && (
-                            <a href={href} className="mt-3 inline-flex rounded-full border px-4 py-2 text-sm">
-                                Open File
-                            </a>
+                            <div className="flex justify-center">
+                                <a
+                                    href={href}
+                                    className="inline-flex rounded-lg border px-4 py-2 text-sm font-medium text-gray-900 transition-colors"
+                                    style={{ textDecoration: 'none' }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#dbeafe'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                >
+                                    Open File
+                                </a>
+                            </div>
                         )}
                     </div>
                 </div>
