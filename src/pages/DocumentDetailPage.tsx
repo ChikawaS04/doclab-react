@@ -1,4 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
 import StatusPill from "../components/StatusPill";
 import { useDocumentWithPolling } from "../lib/useDocumentPolling";
 import { buildDownloadUrl, deleteDocument } from "../api/documents";
@@ -16,13 +17,32 @@ function humanize(label: string) {
     return label.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function FieldCard({ label, value }: { label: string; value: string }) {
+function CollapsibleSection({ title, children }: { title: string; children: React.ReactNode }) {
+    const [isOpen, setIsOpen] = useState(true);
+
     return (
-        <div className="rounded-xl border bg-white p-4 shadow-sm">
-            <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                {label}
-            </div>
-            <div className="mt-1 text-gray-900 font-medium">{value}</div>
+        <div className="border-t pt-4 first:border-t-0 first:pt-0">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center justify-between w-full mb-3 text-left group"
+            >
+                <h3 className="text-base font-semibold text-gray-900">{title}</h3>
+                <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#6b7280"
+                    strokeWidth="2"
+                    style={{
+                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s'
+                    }}
+                >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+            {isOpen && <div>{children}</div>}
         </div>
     );
 }
@@ -154,25 +174,42 @@ export default function DocumentDetailPage() {
                     </div>
 
                     {/* Extracted Information grouped into cards */}
-                    <section className="rounded-2xl bg-white shadow-sm">
-                        <div className="border-b px-5 py-4">
-                            <h2 className="text-lg font-semibold">Extracted Information</h2>
+                    <section
+                        className="rounded-2xl bg-white transition-shadow"
+                        style={{ boxShadow: 'var(--shadow-card)' }}
+                        onMouseEnter={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)'}
+                        onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'var(--shadow-card)'}
+                    >
+                        <div className="border-b px-6 py-4">
+                            <div className="flex items-center gap-2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
+                                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path>
+                                    <rect x="9" y="3" width="6" height="4" rx="1"></rect>
+                                    <path d="M9 12h6"></path>
+                                    <path d="M9 16h6"></path>
+                                </svg>
+                                <h2 className="text-lg font-semibold text-gray-900">Extracted Information</h2>
+                            </div>
                         </div>
 
-                        <div className="space-y-8 p-5">
+                        <div className="p-6 space-y-4">
                             {Object.entries(GROUPS).map(([title, labels]) => {
                                 const items = allFields.filter((f) => labels.includes(f.name));
                                 if (!items.length) return null;
 
                                 return (
-                                    <div key={title}>
-                                        <h3 className="mb-3 text-lg font-semibold">{title}</h3>
-                                        <div className="grid gap-4 sm:grid-cols-2">
+                                    <CollapsibleSection key={title} title={title}>
+                                        <div className="space-y-2">
                                             {items.map((f, i) => (
-                                                <FieldCard key={`${f.name}-${i}`} label={humanize(f.name)} value={f.value} />
+                                                <div key={`${f.name}-${i}`} className="flex items-start justify-between py-2 border-b last:border-b-0">
+                                                    <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 w-2/5">
+                                                        {humanize(f.name)}
+                                                    </dt>
+                                                    <dd className="text-sm text-gray-900 w-3/5 text-right">{f.value}</dd>
+                                                </div>
                                             ))}
                                         </div>
-                                    </div>
+                                    </CollapsibleSection>
                                 );
                             })}
 
@@ -181,14 +218,18 @@ export default function DocumentDetailPage() {
                                 const others = allFields.filter((f) => !known.has(f.name));
                                 if (!others.length) return null;
                                 return (
-                                    <div>
-                                        <h3 className="mb-3 text-lg font-semibold">Other</h3>
-                                        <div className="grid gap-4 sm:grid-cols-2">
+                                    <CollapsibleSection title="Other">
+                                        <div className="space-y-2">
                                             {others.map((f, i) => (
-                                                <FieldCard key={`${f.name}-${i}`} label={humanize(f.name)} value={f.value} />
+                                                <div key={`${f.name}-${i}`} className="flex items-start justify-between py-2 border-b last:border-b-0">
+                                                    <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 w-2/5">
+                                                        {humanize(f.name)}
+                                                    </dt>
+                                                    <dd className="text-sm text-gray-900 w-3/5 text-right">{f.value}</dd>
+                                                </div>
                                             ))}
                                         </div>
-                                    </div>
+                                    </CollapsibleSection>
                                 );
                             })()}
                         </div>
