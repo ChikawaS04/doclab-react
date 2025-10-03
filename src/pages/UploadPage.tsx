@@ -54,17 +54,23 @@ export default function UploadPage() {
             {/* Dropzone card */}
             <div
                 className={[
-                    "card p-12 text-center dropzone-outline",
+                    "card p-12 text-center dropzone-outline transition-shadow",
                     dragOver ? "" : "bg-white",
                 ].join(" ")}
                 style={dragOver ? { backgroundColor: 'var(--doclab-blue-50)' } : {}}
                 onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                 onDragLeave={() => setDragOver(false)}
                 onDrop={(e) => { e.preventDefault(); setDragOver(false); onFiles(e.dataTransfer.files); }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                }}
             >
                 {/* icon */}
                 <div
-                    className="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-2xl text-gray-700 shadow-sm"
+                    className="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-2xl text-gray-700 shadow-sm"
                     style={{ backgroundColor: 'var(--doclab-slate-100)' }}
                 >
                     <UploadIcon />
@@ -75,7 +81,7 @@ export default function UploadPage() {
                     Drag and drop your file here, or click to browse
                 </p>
 
-                <div className="mt-8 flex items-center justify-center gap-3">
+                <div className="mt-6 flex items-center justify-center gap-3">
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
@@ -106,7 +112,7 @@ export default function UploadPage() {
                 )}
 
                 {/* file-type legend */}
-                <div className="mt-6 flex items-center justify-center gap-6 text-sm">
+                <div className="mt-5 flex items-center justify-center gap-6 text-sm">
                     <LegendDot label="PDF"  dotClass="bg-emerald-500" />
                     <LegendDot label="DOCX" dotClass="bg-blue-500" />
                     <LegendDot label="TXT"  dotClass="bg-purple-500" />
@@ -143,14 +149,14 @@ export default function UploadPage() {
                                     <div
                                         className="card p-5 transition-all cursor-pointer"
                                         style={{
-                                            boxShadow: 'var(--shadow-sm)',
+                                            boxShadow: 'var(--shadow-card)',
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+                                            e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)';
                                             e.currentTarget.style.transform = 'translateY(-2px)';
                                         }}
                                         onMouseLeave={(e) => {
-                                            e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                                            e.currentTarget.style.boxShadow = 'var(--shadow-card)';
                                             e.currentTarget.style.transform = 'translateY(0)';
                                         }}
                                     >
