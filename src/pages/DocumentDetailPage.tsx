@@ -67,7 +67,10 @@ export default function DocumentDetailPage() {
             </div>
 
             {/* Header + actions card */}
-            <div className="flex items-center justify-between rounded-2xl bg-white p-5 shadow-sm">
+            <div
+                className="flex items-center justify-between rounded-2xl bg-white p-5"
+                style={{ boxShadow: 'var(--shadow-card)' }}
+            >
                 <div className="flex items-center gap-3">
                     <div>
                         <h2 className="text-xl font-semibold">{doc.fileName}</h2>
