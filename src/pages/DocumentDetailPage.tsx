@@ -121,14 +121,28 @@ export default function DocumentDetailPage() {
             <div className="grid gap-6 lg:grid-cols-3">
                 <div className="space-y-6 lg:col-span-2">
                     {/* Summary */}
-                    <div className="rounded-2xl bg-white p-6 shadow-sm">
-                        <h2 className="mb-3 text-xl font-semibold">Summary</h2>
+                    <div
+                        className="rounded-2xl bg-white p-6"
+                        style={{ boxShadow: 'var(--shadow-card)' }}
+                    >
+                        <div className="flex items-center gap-2 mb-4">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            <h2 className="text-xl font-semibold text-gray-900">Summary</h2>
+                        </div>
                         {doc.summaries?.length ? (
                             <div className="space-y-4">
                                 {doc.summaries.map((s, i) => (
-                                    <div key={i}>
-                                        {s.title && <div className="text-sm font-medium text-gray-700">{s.title}</div>}
-                                        <div className="mt-1 text-sm text-gray-800 whitespace-pre-line">
+                                    <div key={i} className="space-y-2">
+                                        {s.title && (
+                                            <div className="font-semibold text-gray-900">{s.title}</div>
+                                        )}
+                                        <div className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
                                             {s.summaryText || "—"}
                                         </div>
                                     </div>
