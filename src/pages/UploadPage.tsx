@@ -118,7 +118,7 @@ export default function UploadPage() {
                 <h2 className="text-heading text-2xl">Recent Uploads</h2>
                 <p className="text-sm text-gray-600">Your latest documents</p>
 
-                <div className="card mt-2 overflow-hidden">
+                <div className="mt-4">
                     {recent.isLoading && (
                         <div className="p-6 text-center text-sm text-gray-600">
                             Loading…
@@ -132,35 +132,51 @@ export default function UploadPage() {
                     )}
 
                     {recent.data?.items?.length ? (
-                        <ul className="divide-y">
+                        <div className="space-y-3">
                             {recent.data.items.map((d) => (
-                                <li key={d.id} className="px-5 py-4 hover:bg-gray-50">
-                                    <div className="flex items-center justify-between gap-4">
-                                        <div className="flex items-center gap-3 min-w-0">
-                                            <div className="grid h-10 w-10 place-items-center rounded-xl bg-gray-100">
-                                                <FileIcon />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <Link
-                                                    to={`/documents/${d.id}`}
-                                                    className="block truncate text-base text-gray-900 hover:underline"
-                                                    title={d.fileName}
-                                                >
-                                                    {d.fileName}
-                                                </Link>
-                                                <div className="text-xs text-gray-500">
-                                                    {safeDateStr(d.uploadDate)}
+                                <Link
+                                    key={d.id}
+                                    to={`/documents/${d.id}`}
+                                    className="block"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div
+                                        className="card p-5 transition-all cursor-pointer"
+                                        style={{
+                                            boxShadow: 'var(--shadow-sm)',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                        }}
+                                    >
+                                        <div className="flex items-center justify-between gap-4">
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <div className="grid h-10 w-10 place-items-center rounded-xl bg-gray-100 shrink-0">
+                                                    <FileIcon />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <div className="truncate text-base font-medium text-gray-900" title={d.fileName}>
+                                                        {d.fileName}
+                                                    </div>
+                                                    <div className="text-xs text-gray-500 mt-0.5">
+                                                        {safeDateStr(d.uploadDate)}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div className="shrink-0">
-                                            <StatusPill status={toUiStatus(d.status)} />
+                                            <div className="shrink-0">
+                                                <StatusPill status={toUiStatus(d.status)} />
+                                            </div>
                                         </div>
                                     </div>
-                                </li>
+                                </Link>
                             ))}
-                        </ul>
+                        </div>
                     ) : (
                         !recent.isLoading && (
                             <div className="p-6 text-center text-sm text-gray-600">
