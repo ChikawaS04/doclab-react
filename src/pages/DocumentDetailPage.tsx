@@ -52,17 +52,29 @@ export default function DocumentDetailPage() {
 
     return (
         <section className="space-y-6">
-            <Link to="/documents" className="text-sm text-gray-600 hover:underline">
-                ← Back to Documents
-            </Link>
+            {/* Header with Back button and Detail title */}
+            <div className="flex items-center justify-between">
+                <h1 className="text-3xl font-semibold">Detail</h1>
+                <Link
+                    to="/documents"
+                    className="text-sm text-gray-600 transition-colors rounded-lg px-3 py-2"
+                    style={{ textDecoration: 'none' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#dbeafe'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                    ← Back to Documents
+                </Link>
+            </div>
 
-            {/* Header + actions */}
-            <div className="flex items-center justify-between rounded-2xl bg-white p-6 shadow-sm">
-                <div>
-                    <h1 className="text-3xl font-semibold">{doc.fileName}</h1>
-                    <div className="mt-2 flex items-center gap-3 text-sm text-gray-600">
-                        <span>{safeDateStr(doc.uploadDate)}</span>
-                        <StatusPill status={toUiStatus(doc.status)} />
+            {/* Header + actions card */}
+            <div className="flex items-center justify-between rounded-2xl bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                    <div>
+                        <h2 className="text-xl font-semibold">{doc.fileName}</h2>
+                        <div className="mt-1 flex items-center gap-3 text-sm text-gray-600">
+                            <span>{safeDateStr(doc.uploadDate)}</span>
+                            <StatusPill status={toUiStatus(doc.status)} />
+                        </div>
                     </div>
                 </div>
 
@@ -70,8 +82,16 @@ export default function DocumentDetailPage() {
                     {href && (
                         <a
                             href={href}
-                            className="btn-primary rounded-full px-4 py-2"
+                            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+                            style={{ backgroundColor: '#2563eb' }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
                         >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
                             Download
                         </a>
                     )}
@@ -81,10 +101,14 @@ export default function DocumentDetailPage() {
                             if (!window.confirm("Delete this document? This cannot be undone.")) return;
                             remove.mutate();
                         }}
-                        className={`rounded-full px-4 py-2 text-white transition ${
+                        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors ${
                             remove.isPending ? "bg-gray-400" : "bg-red-600 hover:bg-red-700"
                         }`}
                     >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
                         {remove.isPending ? "Deleting…" : "Delete"}
                     </button>
                 </div>
